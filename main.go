@@ -45,16 +45,20 @@ func renderGrid(vpWidth, vpHeight int) {
 	// var vertChar rune = '|'
 
 	const coldef = termbox.ColorDefault
-	midy := vpHeight / 2
-	midx := (vpWidth - 30) / 2
-	termbox.SetCell(midx-1, midy, '│', coldef, coldef)
-	termbox.SetCell(midx+vpWidth, midy, '│', coldef, coldef)
-	termbox.SetCell(midx-1, midy-1, '┌', coldef, coldef)
-	termbox.SetCell(midx-1, midy+1, '└', coldef, coldef)
-	termbox.SetCell(midx+vpWidth, midy-1, '┐', coldef, coldef)
-	termbox.SetCell(midx+vpWidth, midy+1, '┘', coldef, coldef)
-	fill(midx, midy-1, vpWidth, 1, termbox.Cell{Ch: '─'})
-	fill(midx, midy+1, vpWidth, 1, termbox.Cell{Ch: '─'})
+	guiWidth := vpWidth - 2
+	guiHeight := vpHeight - 2
+	x1 := 1
+	y1 := 1
+	x2 := x1 + guiWidth
+	y2 := y1 + guiHeight
+	termbox.SetCell(x1, y1, '┌', coldef, coldef)
+	termbox.SetCell(x1, y2, '└', coldef, coldef)
+	termbox.SetCell(x2, y1, '┐', coldef, coldef)
+	termbox.SetCell(x2, y2, '┘', coldef, coldef)
+	fill(x1, y1, guiWidth, 1, termbox.Cell{Ch: '─'})
+	fill(x1, y2, guiWidth, 1, termbox.Cell{Ch: '─'})
+	fill(x1, y1, 1, guiHeight, termbox.Cell{Ch: '|'})
+	fill(x2, y1, 1, guiHeight, termbox.Cell{Ch: '|'})
 	termbox.Flush()
 }
 
@@ -65,6 +69,8 @@ func fill(x, y, w, h int, cell termbox.Cell) {
 		}
 	}
 }
+func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
+func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
 
 func bgthread() {
 	ticker := time.NewTicker(time.Second)
