@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 	// "unicode/utf8"
 
@@ -15,19 +14,29 @@ const bg = termbox.ColorBlack
 func main() {
 	err := termbox.Init()
 	if err != nil {
-		fmt.Print(err)
-		return
+		panic(err)
 	}
 	defer termbox.Close()
+	termbox.SetInputMode(termbox.InputEsc)
 
 	w, h := termbox.Size()
-	fmt.Println("Viewport dimensions: ", w, h)
 	renderGrid(w, h)
 
 	// go bgthread()
 
 	termbox.Flush()
 
+mainloop:
+	for {
+		switch ev := termbox.PollEvent(); ev.Type {
+		case termbox.EventKey:
+			switch ev.Key {
+			case termbox.KeyEsc:
+				break mainloop
+			}
+		}
+
+	}
 }
 
 func renderGrid(vpWidth, vpHeight int) {
