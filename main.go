@@ -45,10 +45,11 @@ func renderGrid(vpWidth, vpHeight int) {
 	// var vertChar rune = '|'
 
 	const coldef = termbox.ColorDefault
-	guiWidth := vpWidth - 2
-	guiHeight := vpHeight - 2
-	x1 := 1
-	y1 := 1
+	offset := 5
+	guiWidth := vpWidth - 2*offset
+	guiHeight := vpHeight - 2*offset
+	x1 := offset
+	y1 := offset
 	x2 := x1 + guiWidth
 	y2 := y1 + guiHeight
 	termbox.SetCell(x1, y1, '┌', coldef, coldef)
@@ -59,6 +60,11 @@ func renderGrid(vpWidth, vpHeight int) {
 	fill(x1, y2, guiWidth, 1, termbox.Cell{Ch: '─'})
 	fill(x1, y1, 1, guiHeight, termbox.Cell{Ch: '│'})
 	fill(x2, y1, 1, guiHeight, termbox.Cell{Ch: '│'})
+
+	containers := 3
+	containerWidth := guiWidth / containers
+	fill(x1+1*containerWidth, y1, 1, guiHeight, termbox.Cell{Ch: '|'})
+	fill(x1+2*containerWidth, y1, 1, guiHeight, termbox.Cell{Ch: '|'})
 	termbox.Flush()
 }
 
