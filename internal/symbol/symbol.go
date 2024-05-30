@@ -7,10 +7,10 @@ type Symbol struct {
 	isGlyph bool // is a valid word
 }
 
-func NewSymbol(runes []rune) *Symbol {
+func NewSymbol(word string) *Symbol {
 	s := new(Symbol)
 	// since runes coming from an api. they xhould alreasdy be on hesp
-	s.runes = runes
-	s.isGlyph = len(runes) <= 1
+	s.runes = []rune(word)
+	s.isGlyph = len(s.runes) <= 1
 	return s
 }
