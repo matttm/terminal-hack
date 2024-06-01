@@ -53,6 +53,6 @@ func reset() {}
 func renderSymbols() {
 }
 func (c *Container) RenderContainer() error {
-	renderer.RenderGrid(c.x1, c.y1, c.columns, c.rows)
+	renderer.RenderRectangle(c.x1, c.y1, c.columns, c.rows)
 	return nil
 }
