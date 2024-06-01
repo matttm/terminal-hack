@@ -9,6 +9,7 @@ type Container struct {
 	y1           int
 	rows         int
 	columns      int
+	size         int   // the amount of characters in this container (cannot exceed R*C)
 	startIndices []int // where the value is the starting position of that word (r*C + c)
 	tracking     map[int]*symbol.Symbol
 }
@@ -19,6 +20,7 @@ func NewContainer(x1, y1, rows, columns int) *Container {
 	c.y1 = y1
 	c.rows = rows
 	c.columns = columns
+	c.size = 0
 	c.startIndices = make([]int, 20)
 	c.tracking = make(map[int]*symbol.Symbol)
 	return c
@@ -26,6 +28,10 @@ func NewContainer(x1, y1, rows, columns int) *Container {
 
 func (c *Container) InsertWord(word string) bool {
 	nextPosition := 0
+	// check to see containrer has enough room for word
+	if c.RemainingCapacity() < len(word) {
+		return false
+	}
 	// if there is an element in map, get biggest index
 	if len(c.startIndices) > 0 {
 		lastPosition := c.startIndices[len(c.startIndices)-1] // starting position of last word
@@ -34,8 +40,14 @@ func (c *Container) InsertWord(word string) bool {
 	}
 	c.startIndices = append(c.startIndices, nextPosition)
 	c.tracking[nextPosition] = symbol.NewSymbol(word)
+	return true
 }
-
-func (c *Container) IsFull() bool {
-	return false
+func (c *Container) RemainingCapacity() int {
+	return c.rows*c.columns - c.size
+}
+func reset() {}
+func renderSymbols() {
+}
+func (c *Container) RenderContainer() error {
+	return nil
 }
