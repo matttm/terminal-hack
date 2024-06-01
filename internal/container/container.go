@@ -1,6 +1,9 @@
 package container
 
-import "terminal_hack/internal/symbol"
+import (
+	"terminal_hack/internal/renderer"
+	"terminal_hack/internal/symbol"
+)
 
 type Container struct {
 	id int
@@ -21,7 +24,7 @@ func NewContainer(x1, y1, rows, columns int) *Container {
 	c.rows = rows
 	c.columns = columns
 	c.size = 0
-	c.startIndices = make([]int, 20)
+	c.startIndices = []int{}
 	c.tracking = make(map[int]*symbol.Symbol)
 	return c
 }
@@ -40,6 +43,7 @@ func (c *Container) InsertWord(word string) bool {
 	}
 	c.startIndices = append(c.startIndices, nextPosition)
 	c.tracking[nextPosition] = symbol.NewSymbol(word)
+	c.size += len(word)
 	return true
 }
 func (c *Container) RemainingCapacity() int {
@@ -49,5 +53,6 @@ func reset() {}
 func renderSymbols() {
 }
 func (c *Container) RenderContainer() error {
+	renderer.RenderGrid(c.x1, c.y1, c.columns, c.rows)
 	return nil
 }

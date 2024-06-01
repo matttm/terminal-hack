@@ -1,10 +1,9 @@
 package main
 
 import (
-	"time"
-	// "unicode/utf8"
+	"terminal_hack/internal/container"
+	"terminal_hack/internal/utilities"
 
-	// "github.com/mattn/go-runewidth"
 	"github.com/nsf/termbox-go"
 )
 
@@ -20,7 +19,10 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 
 	w, h := termbox.Size()
-	renderGrid(w, h)
+	words, _ := utilities.GetWordList(100)
+	c := container.NewContainer(5, 5, h, w)
+	c.InsertWord(words[0])
+	c.RenderContainer()
 
 	// go bgthread()
 
@@ -36,20 +38,5 @@ mainloop:
 			}
 		}
 
-	}
-}
-
-func bgthread() {
-	ticker := time.NewTicker(time.Second)
-	defer ticker.Stop()
-	for {
-		w, h := termbox.Size()
-		for x := 0; x < w; x++ {
-			for y := 0; y < h; y++ {
-				termbox.SetFg(x, y, termbox.ColorGreen)
-			}
-		}
-		termbox.Flush()
-		<-ticker.C // wait for ticker
 	}
 }

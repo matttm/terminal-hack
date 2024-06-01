@@ -1,7 +1,5 @@
 package symbol
 
-import "golang.org/x/text/runes"
-
 type Symbol struct {
 	runes []rune
 }
