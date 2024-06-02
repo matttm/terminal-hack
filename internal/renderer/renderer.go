@@ -39,8 +39,8 @@ func fill(x, y, w, h int, cell termbox.Cell) {
 func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
 func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
 func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols map[int]*symbol.Symbol) {
-	offset := 5
-	cols := vpWidth - 2*offset - 2
+	offset := 5 + 1
+	cols := vpWidth - 2*offset
 	// rows := vpHeight - 2*offset - 2
 	const coldef = termbox.ColorDefault
 	offset_x := x1 + 1
