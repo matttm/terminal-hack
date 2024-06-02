@@ -1,6 +1,7 @@
 package renderer
 
 import (
+	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/symbol"
 
 	"github.com/nsf/termbox-go"
@@ -39,9 +40,9 @@ func fill(x, y, w, h int, cell termbox.Cell) {
 func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
 func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
 func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols map[int]*symbol.Symbol) {
-	offset := 5 + 1
-	cols := vpWidth - 2*offset
-	// rows := vpHeight - 2*offset - 2
+	offset := 5
+	cols := vpWidth - 2*offset - 1
+	rows := vpHeight - 2*offset - 1
 	const coldef = termbox.ColorDefault
 	offset_x := x1 + 1
 	offset_y := y1 + 1
@@ -54,16 +55,28 @@ func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols map[int]*sy
 		c := (position % cols) + offset_x
 		for _, _rune := range sym.Runes {
 			// the following checks if the container is full
-			// if (r-offset_y)*(c-offset_x) >= rows*cols {
-			// 	return
-			// }
+			if r-offset_y >= rows {
+				_rune = 'X' // return
+			}
 			termbox.SetCell(c, r, _rune, coldef, coldef)
 			c += 1
 			// the below conditipn is c - 2 to remove offset
-			if c-offset_x > cols {
+			if c-offset_x >= cols {
 				c = offset_x
 				r += 1
 			}
 		}
 	}
+}
+func InvertSymbol(c *cursor.Cursor) {
+	// TODO: get the right starting coordintes
+	x, y := c.X, c.Y
+	let cell termbox.Cell = nil
+	for i, r := range c.Selection.Runes {
+		cell = termbox.GetCell(y, c)
+		let tmp = cell.fg
+		cell.fg = cell.bg
+		cell.bg = tmp
+	}
+
 }

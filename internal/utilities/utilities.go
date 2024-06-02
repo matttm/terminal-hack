@@ -7,3 +7,6 @@ func GetWordList(count int) ([]string, error) {
 	}
 	return words, nil
 }
+func BinarySearch(A []int, left, right, target int) int {
+	return 0
+}
