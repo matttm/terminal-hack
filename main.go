@@ -19,7 +19,7 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 
 	w, h := termbox.Size()
-	words, _ := utilities.GetWordList(100)
+	words, _ := utilities.GetWordList(1000)
 	c := container.NewContainer(5, 5, h, w/3)
 	for _, w := range words {
 		c.InsertWord(w)

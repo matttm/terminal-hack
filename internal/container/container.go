@@ -51,7 +51,7 @@ func (c *Container) RemainingCapacity() int {
 }
 func reset() {}
 func (c *Container) RenderSymbols() {
-	renderer.RenderSymbolsInContainer(c.x1, c.y1, c.rows, c.columns, c.tracking)
+	renderer.RenderSymbolsInContainer(c.x1, c.y1, c.columns, c.rows, c.tracking)
 }
 func (c *Container) RenderContainer() error {
 	renderer.RenderRectangle(c.x1, c.y1, c.columns, c.rows)
