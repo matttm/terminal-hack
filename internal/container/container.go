@@ -36,7 +36,7 @@ func (c *Container) InsertWord(word string) bool {
 		return false
 	}
 	// if there is an element in map, get biggest index
-	if len(c.startIndices) > 0 {
+	if c.size > 0 {
 		lastPosition := c.startIndices[len(c.startIndices)-1] // starting position of last word
 		lastSymbol := c.tracking[lastPosition]
 		nextPosition = lastPosition + lastSymbol.Length()
@@ -50,7 +50,8 @@ func (c *Container) RemainingCapacity() int {
 	return c.rows*c.columns - c.size
 }
 func reset() {}
-func renderSymbols() {
+func (c *Container) RenderSymbols() {
+	renderer.RenderSymbolsInContainer(c.x1, c.y1, c.rows, c.columns, c.tracking)
 }
 func (c *Container) RenderContainer() error {
 	renderer.RenderRectangle(c.x1, c.y1, c.columns, c.rows)

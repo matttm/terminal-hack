@@ -1,6 +1,8 @@
 package renderer
 
 import (
+	"terminal_hack/internal/symbol"
+
 	"github.com/nsf/termbox-go"
 )
 
@@ -36,3 +38,25 @@ func fill(x, y, w, h int, cell termbox.Cell) {
 }
 func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
 func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
+func RenderSymbolsInContainer(x1, y1, rows, cols int, symbols map[int]*symbol.Symbol) {
+	const coldef = termbox.ColorDefault
+	offset_x := x1 + 1
+	offset_y := y1 + 1
+	// shrink row/col to be in container
+	rows -= 2
+	cols -= 2
+	// TODO: move the startingInddices[] out of container
+	for position, sym := range symbols {
+		r := (position / cols) + offset_y
+		c := (position % cols) + offset_x
+		for _, _rune := range sym.Runes {
+			termbox.SetCell(c, r, _rune, coldef, coldef)
+			c += 1
+			// the below conditipn is c - 2 to remove offset
+			if c-4 >= cols {
+				c = offset_x
+				r += 1
+			}
+		}
+	}
+}

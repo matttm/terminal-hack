@@ -21,10 +21,11 @@ func main() {
 	w, h := termbox.Size()
 	words, _ := utilities.GetWordList(100)
 	c := container.NewContainer(5, 5, h, w/3)
-	c.InsertWord(words[0])
+	for _, w := range words {
+		c.InsertWord(w)
+	}
 	c.RenderContainer()
-
-	// go bgthread()
+	c.RenderSymbols()
 
 	termbox.Flush()
 
