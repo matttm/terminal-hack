@@ -2,6 +2,7 @@ package main
 
 import (
 	"terminal_hack/internal/container"
+	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/utilities"
 
 	"github.com/nsf/termbox-go"
@@ -26,6 +27,8 @@ func main() {
 	}
 	c.RenderContainer()
 	c.RenderSymbols()
+
+	cursor := cursor.InitializeCursor(0, 0, c.GetSymbolAt(0))
 
 	termbox.Flush()
 

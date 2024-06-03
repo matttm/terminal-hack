@@ -71,12 +71,14 @@ func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols map[int]*sy
 func InvertSymbol(c *cursor.Cursor) {
 	// TODO: get the right starting coordintes
 	x, y := c.X, c.Y
-	let cell termbox.Cell = nil
-	for i, r := range c.Selection.Runes {
-		cell = termbox.GetCell(y, c)
-		let tmp = cell.fg
-		cell.fg = cell.bg
-		cell.bg = tmp
-	}
+	var cell termbox.Cell
+	// for i, _ := range c.Selection.Runes {
+	cell = termbox.GetCell(y, x)
+	var tmp = cell.Fg
+	cell.Fg = cell.Bg
+	cell.Bg = tmp
+	termbox.SetCell(y, x, cell.Ch, cell.Fg, cell.Bg)
+	// TODO: just get one cell to flicker for now
+	// }
 
 }

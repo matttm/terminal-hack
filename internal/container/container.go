@@ -3,7 +3,7 @@ package container
 import (
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
-	"terminal_hack/internal/utilities"
+	// "terminal_hack/internal/utilities"
 )
 
 type Container struct {
@@ -58,12 +58,24 @@ func (c *Container) RenderContainer() error {
 	renderer.RenderRectangle(c.x1, c.y1, c.columns, c.rows)
 	return nil
 }
-func (c *Container) findSymbolAtCoordinates(x, y int) (*symbol.Symbol, error) {
-	x, y = removeOffset(x, y)
-	encodedCoordinate := y*c.columns + x
-	index := utilities.binarySearch(c.startIndices, 0, len(c.startIndices), encodedCoordinate)
-	return c.tracking[index], nil
-}
+
+//	func (c *Container) findSymbolAtCoordinates(x, y int) (*symbol.Symbol, error) {
+//		x, y = removeOffset(x, y)
+//		encodedCoordinate := y*c.columns + x
+//		index := utilities.binarySearch(c.startIndices, 0, len(c.startIndices), encodedCoordinate)
+//		return c.tracking[index], nil
+//	}
 func removeOffset(x, y int) (int, int) {
 	return x, y
+}
+func (c *Container) GetSymbolAt(position int) (*symbol.Symbol, error) {
+	if position == 0 {
+		return c.tracking[0], nil
+	}
+	for _, i := range c.startIndices {
+		if position > i {
+			return c.tracking[i-1], nil
+		}
+	}
+	return nil, nil
 }
