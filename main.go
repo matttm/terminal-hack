@@ -62,12 +62,16 @@ mainloop:
 				// cursor.Blink()
 				break
 			case termbox.KeyArrowUp:
+				cursor.Y -= 1
 				break
 			case termbox.KeyArrowDown:
+				cursor.Y += 1
 				break
 			case termbox.KeyArrowLeft:
+				cursor.X -= 1
 				break
 			case termbox.KeyArrowRight:
+				cursor.X += 1
 				break
 			}
 		}

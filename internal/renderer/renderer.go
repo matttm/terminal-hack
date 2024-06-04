@@ -77,14 +77,14 @@ func ColorRune(x, y int, s *symbol.Symbol, fg, bg termbox.Attribute) {
 	_y := y
 	// fmt.Print(s.Runes)
 	for _, r := range s.Runes {
-		termbox.SetCell(_y, _x, rune(r), fg, bg)
+		termbox.SetCell(_x, _y, rune(r), fg, bg)
 		err := termbox.Flush()
 		if err != nil {
 			panic(err)
 		}
 		// TODO: just get one cell to flicker for now
 		// TODO move this logic to func
-		_y += 1
+		_x += 1
 		// todo get # of cols
 	}
 
