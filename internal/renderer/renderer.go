@@ -1,7 +1,7 @@
 package renderer
 
 import (
-	"terminal_hack/internal/cursor"
+	"fmt"
 	"terminal_hack/internal/symbol"
 
 	"github.com/nsf/termbox-go"
@@ -68,17 +68,22 @@ func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols map[int]*sy
 		}
 	}
 }
-func InvertSymbol(c *cursor.Cursor) {
+func ColorRune(x, y int, s *symbol.Symbol, fg, bg termbox.Attribute) {
 	// TODO: get the right starting coordintes
-	x, y := c.X, c.Y
-	var cell termbox.Cell
-	// for i, _ := range c.Selection.Runes {
-	cell = termbox.GetCell(y, x)
-	var tmp = cell.Fg
-	cell.Fg = cell.Bg
-	cell.Bg = tmp
-	termbox.SetCell(y, x, cell.Ch, cell.Fg, cell.Bg)
-	// TODO: just get one cell to flicker for now
-	// }
+	// var cell termbox.Cell
+	_x := x
+	// _y := y
+	fmt.Print(s.Runes)
+	for _, r := range s.Runes {
+		termbox.SetCell(y, x, r, fg, bg)
+		err := termbox.Flush()
+		if err != nil {
+			panic(err)
+		}
+		// TODO: just get one cell to flicker for now
+		// TODO move this logic to func
+		_x += 1
+		// todo get # of cols
+	}
 
 }

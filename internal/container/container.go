@@ -1,6 +1,7 @@
 package container
 
 import (
+	"errors"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
 	// "terminal_hack/internal/utilities"
@@ -73,9 +74,9 @@ func (c *Container) GetSymbolAt(position int) (*symbol.Symbol, error) {
 		return c.tracking[0], nil
 	}
 	for _, i := range c.startIndices {
-		if position > i {
+		if position >= i {
 			return c.tracking[i-1], nil
 		}
 	}
-	return nil, nil
+	return nil, errors.New("Cannot find symbol")
 }

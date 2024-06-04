@@ -5,6 +5,8 @@ import (
 	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/utilities"
 
+	"time"
+
 	"github.com/nsf/termbox-go"
 )
 
@@ -28,7 +30,22 @@ func main() {
 	c.RenderContainer()
 	c.RenderSymbols()
 
-	cursor := cursor.InitializeCursor(0, 0, c.GetSymbolAt(0))
+	sym, err := c.GetSymbolAt(0)
+	if err != nil {
+		panic(err)
+	}
+	cursor := cursor.InitializeCursor(6, 6, sym)
+	ticker := time.NewTicker(500 * time.Millisecond)
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				// fmt.Println("Blink")
+				cursor.Blink()
+			}
+		}
+	}()
+	defer ticker.Stop()
 
 	termbox.Flush()
 
@@ -39,6 +56,9 @@ mainloop:
 			switch ev.Key {
 			case termbox.KeyEsc:
 				break mainloop
+			case termbox.KeySpace:
+				// cursor.Blink()
+				break
 			}
 		}
 
