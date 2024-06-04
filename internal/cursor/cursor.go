@@ -1,6 +1,7 @@
 package cursor
 
 import (
+	"terminal_hack/internal/constants"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
 
@@ -26,10 +27,13 @@ func (c *Cursor) Blink() {
 	c1, c2 := c.getBlinkStateColors()
 	renderer.ColorRune(c.X, c.Y, c.Selection, c1, c2)
 }
+func (c *Cursor) ResetSymbol() {
+	renderer.ColorRune(c.X, c.Y, c.Selection, constants.FG, constants.BG)
+}
 func (c *Cursor) getBlinkStateColors() (termbox.Attribute, termbox.Attribute) {
 	c.blinkStatus = !c.blinkStatus
-	c1 := termbox.ColorGreen
-	c2 := termbox.ColorBlack
+	c1 := constants.FG
+	c2 := constants.BG
 	if c.blinkStatus {
 		return c1, c2
 	} else {

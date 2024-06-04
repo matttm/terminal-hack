@@ -53,11 +53,21 @@ mainloop:
 	for {
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
+			// x, y := cursor.X, cursor.Y
+			cursor.ResetSymbol()
 			switch ev.Key {
 			case termbox.KeyEsc:
 				break mainloop
 			case termbox.KeySpace:
 				// cursor.Blink()
+				break
+			case termbox.KeyArrowUp:
+				break
+			case termbox.KeyArrowDown:
+				break
+			case termbox.KeyArrowLeft:
+				break
+			case termbox.KeyArrowRight:
 				break
 			}
 		}

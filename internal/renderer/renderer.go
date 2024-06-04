@@ -1,11 +1,14 @@
 package renderer
 
 import (
-	"fmt"
+	// "fmt"
 	"terminal_hack/internal/symbol"
 
 	"github.com/nsf/termbox-go"
 )
+
+const fg = termbox.ColorGreen
+const bg = termbox.ColorBlack
 
 func RenderRectangle(x1, y1, vpWidth, vpHeight int) {
 	// cols := 3
@@ -43,7 +46,6 @@ func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols map[int]*sy
 	offset := 5
 	cols := vpWidth - 2*offset - 1
 	rows := vpHeight - 2*offset - 1
-	const coldef = termbox.ColorDefault
 	offset_x := x1 + 1
 	offset_y := y1 + 1
 	// shrink row/col to be in container
@@ -58,7 +60,7 @@ func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols map[int]*sy
 			if r-offset_y >= rows {
 				_rune = 'X' // return
 			}
-			termbox.SetCell(c, r, _rune, coldef, coldef)
+			termbox.SetCell(c, r, _rune, fg, bg)
 			c += 1
 			// the below conditipn is c - 2 to remove offset
 			if c-offset_x >= cols {
@@ -72,17 +74,17 @@ func ColorRune(x, y int, s *symbol.Symbol, fg, bg termbox.Attribute) {
 	// TODO: get the right starting coordintes
 	// var cell termbox.Cell
 	_x := x
-	// _y := y
-	fmt.Print(s.Runes)
+	_y := y
+	// fmt.Print(s.Runes)
 	for _, r := range s.Runes {
-		termbox.SetCell(y, x, r, fg, bg)
+		termbox.SetCell(_y, _x, rune(r), fg, bg)
 		err := termbox.Flush()
 		if err != nil {
 			panic(err)
 		}
 		// TODO: just get one cell to flicker for now
 		// TODO move this logic to func
-		_x += 1
+		_y += 1
 		// todo get # of cols
 	}
 
