@@ -51,6 +51,6 @@ func (c *Cursor) Displace(x, y int) {
 	c.mu.Lock()
 	c.X += x
 	c.Y += y
-	c.Selection = c.container.GetSymbolAt(c.X, c.Y)
+	c.Selection, _ = c.container.GetSymbolAt(c.X, c.Y)
 	c.mu.Unlock()
 }

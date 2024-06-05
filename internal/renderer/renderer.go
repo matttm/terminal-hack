@@ -2,6 +2,7 @@ package renderer
 
 import (
 	// "fmt"
+	"terminal_hack/internal/constants"
 	"terminal_hack/internal/symbol"
 
 	"github.com/nsf/termbox-go"
@@ -10,15 +11,17 @@ import (
 const fg = termbox.ColorGreen
 const bg = termbox.ColorBlack
 
+const offset_x = 5
+const offset_y = 5
+
 func RenderRectangle(x1, y1, vpWidth, vpHeight int) {
 	// cols := 3
 	// colWidth := vpWidth / col
 	// var vertChar rune = '|'
 
 	const coldef = termbox.ColorDefault
-	offset := 5
-	guiWidth := vpWidth - 2*offset
-	guiHeight := vpHeight - 2*offset
+	guiWidth := vpWidth - 2*offset_x
+	guiHeight := vpHeight - 2*offset_y
 	x2 := x1 + guiWidth
 	y2 := y1 + guiHeight
 	termbox.SetCell(x1, y1, '┌', coldef, coldef)
@@ -42,10 +45,22 @@ func fill(x, y, w, h int, cell termbox.Cell) {
 }
 func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
 func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
-func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols map[int]*symbol.Symbol) {
-	for _, sym := range symbols {
-		for _, _rune := range sym.Runes {
-			termbox.SetCell(_rune.X, _rune.Y, _rune.Ch, fg, bg)
+func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols [][]*symbol.Symbol) {
+	// seen := map[int]bool{}
+	offset_x := x1 + constants.INSET
+	offset_y := y1 + constants.INSET
+	for _, symRow := range symbols {
+		for _, sym := range symRow {
+			//	if seen[sym.Id] {
+			//		continue
+			//	}
+			//	seen[sym.Id] = true
+			if sym == nil {
+				continue
+			}
+			for _, _rune := range sym.Runes {
+				termbox.SetCell(_rune.X+offset_x, _rune.Y+offset_y, _rune.Ch, fg, bg)
+			}
 		}
 	}
 }

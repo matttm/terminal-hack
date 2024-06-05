@@ -1,6 +1,7 @@
 package main
 
 import (
+	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/utilities"
@@ -9,9 +10,6 @@ import (
 
 	"github.com/nsf/termbox-go"
 )
-
-const fg = termbox.ColorGreen
-const bg = termbox.ColorBlack
 
 func main() {
 	err := termbox.Init()
@@ -23,16 +21,16 @@ func main() {
 
 	w, h := termbox.Size()
 	words, _ := utilities.GetWordList(1000)
-	c := container.NewContainer(5, 5, h, w/3)
+	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h, w/3)
 	c.InsertWords(words)
 	c.RenderContainer()
 	c.RenderSymbols()
 
-	sym, err := c.GetSymbolAt(0)
+	sym, err := c.GetSymbolAt(0, 0)
 	if err != nil {
 		panic(err)
 	}
-	cursor := cursor.InitializeCursor(6, 6, sym)
+	cursor := cursor.InitializeCursor(c, constants.OFFSET+constants.INSET, constants.OFFSET+constants.INSET, sym)
 	ticker := time.NewTicker(500 * time.Millisecond)
 	go func() {
 		for {
@@ -60,16 +58,16 @@ mainloop:
 				// cursor.Blink()
 				break
 			case termbox.KeyArrowUp:
-				cursor.Displace(-1, 0)
-				break
-			case termbox.KeyArrowDown:
-				cursor.Displace(1, 0)
-				break
-			case termbox.KeyArrowLeft:
 				cursor.Displace(0, -1)
 				break
-			case termbox.KeyArrowRight:
+			case termbox.KeyArrowDown:
 				cursor.Displace(0, 1)
+				break
+			case termbox.KeyArrowLeft:
+				cursor.Displace(-1, 0)
+				break
+			case termbox.KeyArrowRight:
+				cursor.Displace(1, 0)
 				break
 			}
 		}

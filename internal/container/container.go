@@ -1,7 +1,6 @@
 package container
 
 import (
-	"errors"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
 	// "terminal_hack/internal/utilities"
@@ -25,33 +24,39 @@ func NewContainer(x1, y1, rows, columns int) *Container {
 	c.rows = rows
 	c.columns = columns
 	c.symbols = make([][]*symbol.Symbol, rows)
-	for i, _ := range c.symbols {
+
+	for i := 0; i < rows; i++ {
 		c.symbols[i] = make([]*symbol.Symbol, columns)
 	}
 	c.size = 0
-	// c.startIndices = []int{}
 	return c
 }
 func (c *Container) InsertWords(words []string) {
-	x := x1 + 1
-	y := y1 + 1
+	x := 0
+	y := 0
 	for _, w := range words {
-		x, y = c.InsertWord(x, y. w)
+		if y >= c.rows || x >= c.columns {
+			return
+		}
+		x, y = c.InsertWord(x, y, w)
 	}
 }
 
 func (c *Container) InsertWord(x, y int, word string) (int, int) {
 	// check to see containrer has enough room for word
-	if c.RemainingCapacity() < len(word) {
+	if c.RemainingCapacity() < c.size+len(word) {
 		return -1, -1
 	}
 	s := symbol.NewSymbol()
-	for i, r := range []rune(word) {
-		c.symbols[y][x] = &s
-		s.InsertRune(x, y, symbol.Rune{ X: x, Y: y, Ch: r })
+	for _, r := range []rune(word) {
+		if y >= c.rows || x >= c.columns {
+			panic("y is out-of-bounds")
+		}
+		c.symbols[y][x] = s
+		s.InsertRune(symbol.Rune{X: x, Y: y, Ch: r})
 		x += 1
-		if (x >= c.x1 + c.columns {
-			x = c.x1 + 1
+		if x >= c.columns {
+			x = 0
 			y += 1
 		}
 	}
@@ -64,7 +69,7 @@ func (c *Container) RemainingCapacity() int {
 }
 func reset() {}
 func (c *Container) RenderSymbols() {
-	renderer.RenderSymbolsInContainer(c.x1, c.y1, c.columns, c.rows, c.tracking)
+	renderer.RenderSymbolsInContainer(c.x1, c.y1, c.columns, c.rows, c.symbols)
 }
 func (c *Container) RenderContainer() error {
 	renderer.RenderRectangle(c.x1, c.y1, c.columns, c.rows)

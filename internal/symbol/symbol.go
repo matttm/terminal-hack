@@ -1,10 +1,11 @@
 package symbol
 
 type Symbol struct {
+	Id    int
 	Runes []Rune
 }
 
-func NewSymbol(word []Rune) *Symbol {
+func NewSymbol() *Symbol {
 	s := new(Symbol)
 	// since runes coming from an api. they xhould alreasdy be on hesp
 	s.Runes = []Rune{}
