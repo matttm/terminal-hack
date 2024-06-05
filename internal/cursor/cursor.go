@@ -3,6 +3,7 @@ package cursor
 import (
 	"sync"
 	"terminal_hack/internal/constants"
+	"terminal_hack/internal/container"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
 
@@ -15,10 +16,12 @@ type Cursor struct {
 	Selection   *symbol.Symbol
 	blinkStatus bool
 	mu          sync.Mutex
+	container   *container.Container
 }
 
-func InitializeCursor(x, y int, symbol *symbol.Symbol) *Cursor {
+func InitializeCursor(container *container.Container, x, y int, symbol *symbol.Symbol) *Cursor {
 	c := new(Cursor)
+	c.container = container
 	c.X = x
 	c.Y = y
 	c.Selection = symbol
@@ -28,11 +31,11 @@ func InitializeCursor(x, y int, symbol *symbol.Symbol) *Cursor {
 func (c *Cursor) Blink() {
 	c1, c2 := c.getBlinkStateColors()
 	c.mu.Lock()
-	renderer.ColorRune(c.X, c.Y, c.Selection, c1, c2)
+	renderer.ColorRune(c.Selection, c1, c2)
 	c.mu.Unlock()
 }
 func (c *Cursor) ResetSymbol() {
-	renderer.ColorRune(c.X, c.Y, c.Selection, constants.FG, constants.BG)
+	renderer.ColorRune(c.Selection, constants.FG, constants.BG)
 }
 func (c *Cursor) getBlinkStateColors() (termbox.Attribute, termbox.Attribute) {
 	c.blinkStatus = !c.blinkStatus
@@ -48,5 +51,6 @@ func (c *Cursor) Displace(x, y int) {
 	c.mu.Lock()
 	c.X += x
 	c.Y += y
+	c.Selection = c.container.GetSymbolAt(c.X, c.Y)
 	c.mu.Unlock()
 }

@@ -24,9 +24,7 @@ func main() {
 	w, h := termbox.Size()
 	words, _ := utilities.GetWordList(1000)
 	c := container.NewContainer(5, 5, h, w/3)
-	for _, w := range words {
-		c.InsertWord(w)
-	}
+	c.InsertWords(words)
 	c.RenderContainer()
 	c.RenderSymbols()
 
