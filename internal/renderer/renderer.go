@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"terminal_hack/internal/symbol"
 
+	"github.com/google/uuid"
 	"github.com/nsf/termbox-go"
 )
 
@@ -45,16 +46,16 @@ func fill(x, y, w, h int, cell termbox.Cell) {
 func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
 func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
 func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols [][]*symbol.Symbol) {
-	// seen := map[int]bool{}
+	seen := make(map[uuid.UUID]bool)
 	for _, symRow := range symbols {
 		for _, sym := range symRow {
-			//	if seen[sym.Id] {
-			//		continue
-			//	}
-			//	seen[sym.Id] = true
 			if sym == nil {
 				continue
 			}
+			if seen[sym.Id] {
+				continue
+			}
+			seen[sym.Id] = true
 			for _, _rune := range sym.Runes {
 				termbox.SetCell(_rune.X, _rune.Y, _rune.Ch, fg, bg)
 			}

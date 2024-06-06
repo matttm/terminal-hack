@@ -1,12 +1,15 @@
 package symbol
 
+import "github.com/google/uuid"
+
 type Symbol struct {
-	Id    int
+	Id    uuid.UUID
 	Runes []Rune
 }
 
 func NewSymbol() *Symbol {
 	s := new(Symbol)
+	s.Id = uuid.New()
 	// since runes coming from an api. they xhould alreasdy be on hesp
 	s.Runes = []Rune{}
 	return s

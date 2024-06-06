@@ -49,8 +49,18 @@ func (c *Cursor) getBlinkStateColors() (termbox.Attribute, termbox.Attribute) {
 }
 func (c *Cursor) Displace(x, y int) {
 	c.mu.Lock()
+	c._displace(x, y)
+	c.mu.Unlock()
+}
+func (c *Cursor) _displace(x, y int) {
+	if !c.container.IsPointInContainer(c.X+x, c.Y+y) {
+		return
+	}
 	c.X += x
 	c.Y += y
-	c.Selection, _ = c.container.GetSymbolAt(c.X, c.Y)
-	c.mu.Unlock()
+	tmp, _ := c.container.GetSymbolAt(c.X, c.Y)
+	if c.Selection.Id == tmp.Id {
+		c._displace(x, y)
+	}
+	c.Selection = tmp
 }

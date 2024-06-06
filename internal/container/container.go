@@ -91,3 +91,6 @@ func removeOffset(x, y int) (int, int) {
 func (c *Container) GetSymbolAt(x, y int) (*symbol.Symbol, error) {
 	return c.symbols[y][x], nil
 }
+func (c *Container) IsPointInContainer(x, y int) bool {
+	return x >= 0 && y >= 0 && x < c.columns && y < c.rows
+}
