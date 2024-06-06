@@ -1,6 +1,7 @@
 package container
 
 import (
+	"terminal_hack/internal/constants"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
 	// "terminal_hack/internal/utilities"
@@ -44,6 +45,8 @@ func (c *Container) InsertWords(words []string) {
 
 func (c *Container) InsertWord(x, y int, word string) (int, int) {
 	// check to see containrer has enough room for word
+	offset_x := c.x1 + constants.INSET
+	offset_y := c.y1 + constants.INSET
 	if c.RemainingCapacity() < c.size+len(word) {
 		return -1, -1
 	}
@@ -53,7 +56,7 @@ func (c *Container) InsertWord(x, y int, word string) (int, int) {
 			panic("y is out-of-bounds")
 		}
 		c.symbols[y][x] = s
-		s.InsertRune(symbol.Rune{X: x, Y: y, Ch: r})
+		s.InsertRune(symbol.Rune{X: x + offset_x, Y: y + offset_y, Ch: r})
 		x += 1
 		if x >= c.columns {
 			x = 0

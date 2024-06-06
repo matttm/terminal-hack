@@ -30,7 +30,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cursor := cursor.InitializeCursor(c, constants.OFFSET+constants.INSET, constants.OFFSET+constants.INSET, sym)
+	cursor := cursor.InitializeCursor(c, 0, 0, sym)
 	ticker := time.NewTicker(500 * time.Millisecond)
 	go func() {
 		for {
