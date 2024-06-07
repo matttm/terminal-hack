@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"terminal_hack/internal/carnie"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
@@ -24,6 +25,7 @@ func main() {
 	w, h := termbox.Size()
 	words, _ := utilities.GetWordList(100)
 	words = append(words, utilities.GenerateRandomStrings(500)...)
+
 	fmt.Print(words[0])
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
@@ -31,6 +33,8 @@ func main() {
 
 	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h, w/3)
 	c.InsertWords(words)
+	carnie := carnie.NewCarnie(c.GetSymbols())
+
 	c.RenderContainer()
 	c.RenderSymbols()
 
@@ -76,6 +80,9 @@ mainloop:
 				break
 			case termbox.KeyArrowRight:
 				cursor.Displace(1, 0)
+				break
+			case termbox.KeyEnter:
+				carnie.IsWinner(cursor.GetSelectedSymbol())
 				break
 			}
 		}

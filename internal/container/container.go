@@ -101,3 +101,6 @@ func (c *Container) GetSymbolAt(x, y int) (*symbol.Symbol, error) {
 func (c *Container) IsPointInContainer(x, y int) bool {
 	return x >= 0 && y >= 0 && x < c.columns && y < c.rows
 }
+func (c *Container) GetSymbols() [][]*symbol.Symbol {
+	return c.symbols
+}

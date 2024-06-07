@@ -39,8 +39,8 @@ func (c *Cursor) ResetSymbol() {
 }
 func (c *Cursor) getBlinkStateColors() (termbox.Attribute, termbox.Attribute) {
 	c.blinkStatus = !c.blinkStatus
-	c1 := constants.WORD_FG
-	c2 := constants.WORD_FG
+	c1 := constants.SELECTED_FG
+	c2 := constants.SELECTED_BG
 	if c.blinkStatus {
 		return c1, c2
 	} else {
@@ -63,4 +63,8 @@ func (c *Cursor) _displace(x, y int) {
 		c._displace(x, y)
 	}
 	c.Selection = tmp
+}
+func (c *Cursor) GetSelectedSymbol() *symbol.Symbol {
+	sym, _ := c.container.GetSymbolAt(c.X, c.Y)
+	return sym
 }
