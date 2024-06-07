@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/utilities"
 
+	"math/rand"
 	"time"
 
 	"github.com/nsf/termbox-go"
@@ -20,10 +22,16 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 
 	w, h := termbox.Size()
-	words, _ := utilities.GetWordList(1000)
+	words, _ := utilities.GetWordList(100)
+	words = append(words, utilities.GenerateRandomStrings(500)...)
+	fmt.Print(words[0])
+	rand.Shuffle(len(words), func(i, j int) {
+		words[i], words[j] = words[j], words[i]
+	})
+
 	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h, w/3)
 	c.InsertWords(words)
-	c.RenderContainer()
+	// c.RenderContainer()
 	c.RenderSymbols()
 
 	sym, err := c.GetSymbolAt(0, 0)

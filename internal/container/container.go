@@ -1,6 +1,7 @@
 package container
 
 import (
+	"fmt"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
@@ -40,6 +41,9 @@ func (c *Container) InsertWords(words []string) {
 			return
 		}
 		x, y = c.InsertWord(x, y, w)
+		if x == -1 {
+			fmt.Print(x, " ", y, "(", c.rows, " ", c.columns, " ", c.size, ")")
+		}
 	}
 }
 
@@ -47,13 +51,13 @@ func (c *Container) InsertWord(x, y int, word string) (int, int) {
 	// check to see containrer has enough room for word
 	offset_x := c.x1 + constants.INSET
 	offset_y := c.y1 + constants.INSET
-	if c.RemainingCapacity() < c.size+len(word) {
+	if c.rows*c.columns < c.size+len(word) {
 		return -1, -1
 	}
 	s := symbol.NewSymbol()
 	for _, r := range []rune(word) {
 		if y >= c.rows || x >= c.columns {
-			panic("y is out-of-bounds")
+			panic("x/y is out-of-bounds")
 		}
 		c.symbols[y][x] = s
 		s.InsertRune(symbol.Rune{X: x + offset_x, Y: y + offset_y, Ch: r})
@@ -89,6 +93,9 @@ func removeOffset(x, y int) (int, int) {
 	return x, y
 }
 func (c *Container) GetSymbolAt(x, y int) (*symbol.Symbol, error) {
+	if x > c.columns || y > c.rows {
+		return nil, nil
+	}
 	return c.symbols[y][x], nil
 }
 func (c *Container) IsPointInContainer(x, y int) bool {
