@@ -35,12 +35,12 @@ func (c *Cursor) Blink() {
 	c.mu.Unlock()
 }
 func (c *Cursor) ResetSymbol() {
-	renderer.ColorRune(c.Selection, constants.FG, constants.BG)
+	renderer.ColorRune(c.Selection, c.Selection.FG(), c.Selection.BG())
 }
 func (c *Cursor) getBlinkStateColors() (termbox.Attribute, termbox.Attribute) {
 	c.blinkStatus = !c.blinkStatus
-	c1 := constants.FG
-	c2 := constants.BG
+	c1 := constants.WORD_FG
+	c2 := constants.WORD_FG
 	if c.blinkStatus {
 		return c1, c2
 	} else {

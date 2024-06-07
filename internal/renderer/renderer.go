@@ -57,7 +57,7 @@ func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols [][]*symbol
 			}
 			seen[sym.Id] = true
 			for _, _rune := range sym.Runes {
-				termbox.SetCell(_rune.X, _rune.Y, _rune.Ch, fg, bg)
+				termbox.SetCell(_rune.X, _rune.Y, _rune.Ch, sym.FG(), sym.BG())
 			}
 		}
 	}
