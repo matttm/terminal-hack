@@ -31,7 +31,7 @@ func main() {
 
 	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h, w/3)
 	c.InsertWords(words)
-	// c.RenderContainer()
+	c.RenderContainer()
 	c.RenderSymbols()
 
 	sym, err := c.GetSymbolAt(0, 0)
