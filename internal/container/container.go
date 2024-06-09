@@ -55,20 +55,20 @@ func (c *Container) InsertWord(x, y int, word string) (int, int) {
 		return -1, -1
 	}
 	s := symbol.NewSymbol()
+	s.Str = word
 	for _, r := range []rune(word) {
 		if y >= c.rows || x >= c.columns {
 			panic("x/y is out-of-bounds")
 		}
 		c.symbols[y][x] = s
 		s.InsertRune(symbol.Rune{X: x + offset_x, Y: y + offset_y, Ch: r})
+		c.size += 1
 		x += 1
 		if x >= c.columns {
 			x = 0
 			y += 1
 		}
 	}
-	// if there is an element in map, get biggest index
-	c.size += len(word)
 	return x, y
 }
 func (c *Container) RemainingCapacity() int {

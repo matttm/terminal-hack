@@ -9,6 +9,7 @@ import (
 
 type Symbol struct {
 	Id    uuid.UUID
+	Str   string
 	Runes []Rune
 }
 

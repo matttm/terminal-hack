@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"terminal_hack/internal/carnie"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
@@ -23,10 +22,9 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 
 	w, h := termbox.Size()
-	words, _ := utilities.GetWordList(100)
+	words, _ := utilities.GetWordList(125)
 	words = append(words, utilities.GenerateRandomStrings(500)...)
 
-	fmt.Print(words[0])
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
 	})
