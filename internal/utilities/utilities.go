@@ -1,11 +1,18 @@
 package utilities
 
 import (
+	"fmt"
+	"io"
 	"math/rand"
+	"net/http"
 	"time"
 )
 
 func GetWordList(count int) ([]string, error) {
+	res, _ := http.Get("https://random-word-api.herokuapp.com/word?number=10&length=4")
+	_body, _ := io.ReadAll(res.Body)
+	body := string(_body) // convert byte slice to string
+	fmt.Println(body)
 	words := []string{}
 	for i := 0; i < count; i++ {
 		words = append(words, "test")

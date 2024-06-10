@@ -30,10 +30,12 @@ func main() {
 	})
 
 	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h, w/3)
+	out := container.NewContainer(constants.OFFSET+w/3, constants.OFFSET+w/3, h, w/3)
 	c.InsertWords(words)
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
 	c.RenderContainer()
+	out.RenderContainer()
 	c.RenderSymbols()
 
 	sym, err := c.GetSymbolAt(0, 0)
