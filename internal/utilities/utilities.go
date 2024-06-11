@@ -1,6 +1,7 @@
 package utilities
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -9,14 +10,10 @@ import (
 )
 
 func GetWordList(count int) ([]string, error) {
-	res, _ := http.Get("https://random-word-api.herokuapp.com/word?number=10&length=4")
+	res, _ := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=4", count))
 	_body, _ := io.ReadAll(res.Body)
-	body := string(_body) // convert byte slice to string
-	fmt.Println(body)
-	words := []string{}
-	for i := 0; i < count; i++ {
-		words = append(words, "test")
-	}
+	var words []string
+	json.Unmarshal(_body, &words)
 	return words, nil
 }
 func BinarySearch(A []int, left, right, target int) int {
