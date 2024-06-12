@@ -29,8 +29,8 @@ func main() {
 		words[i], words[j] = words[j], words[i]
 	})
 
-	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h, w/3)
-	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h, w/3)
+	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
+	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
 	c.InsertWords(words)
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
