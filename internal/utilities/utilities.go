@@ -10,7 +10,10 @@ import (
 )
 
 func GetWordList(count int) ([]string, error) {
-	res, _ := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=4", count))
+	res, err := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=4", count))
+	if err == nil {
+		panic("Error getting words")
+	}
 	_body, _ := io.ReadAll(res.Body)
 	var words []string
 	json.Unmarshal(_body, &words)
