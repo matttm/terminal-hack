@@ -11,8 +11,8 @@ import (
 
 func GetWordList(count int) ([]string, error) {
 	res, err := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=4", count))
-	if err == nil {
-		panic("Error getting words")
+	if err != nil {
+		panic(err)
 	}
 	_body, _ := io.ReadAll(res.Body)
 	var words []string
