@@ -18,22 +18,20 @@ func NewCarnie(symbols [][]*symbol.Symbol) *Carnie {
 	return c
 }
 
-func (c *Carnie) IsWinner(s *symbol.Symbol) bool {
+func (c *Carnie) IsWinner(s *symbol.Symbol) (bool, string) {
 	win := c.winningWord.Id == s.Id
 	if win {
-		panic("You won")
+		return true, "You won"
 	}
 	c.lives -= 1
-	fmt.Println("You selected ", s.Str)
 	if len(s.Str) <= 1 {
-		return false
+		return false, "Dud removed"
 	}
 	fraction := c.findCommonCharacters(s.Str)
 	if c.lives == 0 {
-		panic("Come back when you get some money buddy")
+		return false, "Come back when you get some money buddy"
 	}
-	fmt.Println(fraction, " letters correct")
-	return win
+	return false, fmt.Sprintf("%s letters correct", fraction)
 }
 func (c *Carnie) findCommonCharacters(s string) string {
 	s1 := []rune(s)

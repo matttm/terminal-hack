@@ -30,7 +30,7 @@ func main() {
 	})
 
 	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h, w/3)
-	out := container.NewContainer(constants.OFFSET+w/3, constants.OFFSET+w/3, h, w/3)
+	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h, w/3)
 	c.InsertWords(words)
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
@@ -82,7 +82,8 @@ mainloop:
 				cursor.Displace(1, 0)
 				break
 			case termbox.KeyEnter:
-				carnie.IsWinner(cursor.GetSelectedSymbol())
+				_, winStr := carnie.IsWinner(cursor.GetSelectedSymbol())
+				out.WriteLine(winStr)
 				break
 			}
 		}

@@ -72,3 +72,16 @@ func ColorRune(s *symbol.Symbol, fg, bg termbox.Attribute) {
 	}
 
 }
+
+func WriteLine(_x, _y int, w, h int, s string, fg, bg termbox.Attribute) {
+	runes := []rune(s)
+	x, y := _x, _y
+	for _, r := range runes {
+		termbox.SetCell(x, y, r, fg, bg)
+		x++
+		if x == _x+w {
+			x = _x
+			y += 1
+		}
+	}
+}

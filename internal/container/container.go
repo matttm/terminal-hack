@@ -83,12 +83,6 @@ func (c *Container) RenderContainer() error {
 	return nil
 }
 
-//	func (c *Container) findSymbolAtCoordinates(x, y int) (*symbol.Symbol, error) {
-//		x, y = removeOffset(x, y)
-//		encodedCoordinate := y*c.columns + x
-//		index := utilities.binarySearch(c.startIndices, 0, len(c.startIndices), encodedCoordinate)
-//		return c.tracking[index], nil
-//	}
 func removeOffset(x, y int) (int, int) {
 	return x, y
 }
@@ -103,4 +97,7 @@ func (c *Container) IsPointInContainer(x, y int) bool {
 }
 func (c *Container) GetSymbols() [][]*symbol.Symbol {
 	return c.symbols
+}
+func (c *Container) WriteLine(s string) {
+	renderer.WriteLine(c.x1+constants.TEXT_PADDING, c.y1+constants.TEXT_PADDING, c.columns, c.rows, s, constants.DUD_FG, constants.DUD_BG)
 }

@@ -13,3 +13,5 @@ const DUD_BG = termbox.ColorBlack
 
 const OFFSET = 5
 const INSET = 1
+
+const TEXT_PADDING = 2
