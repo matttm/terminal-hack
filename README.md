@@ -1,6 +1,6 @@
 # terminal-hack
 
-Development: Active
+Development: Inactive
 
 ## Description
 
