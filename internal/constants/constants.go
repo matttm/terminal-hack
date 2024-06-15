@@ -15,3 +15,5 @@ const OFFSET = 5
 const INSET = 1
 
 const TEXT_PADDING = 2
+
+const LIVES = 5

@@ -3,6 +3,7 @@ package carnie
 import (
 	"fmt"
 	"math/rand"
+	"terminal_hack/internal/constants"
 	"terminal_hack/internal/symbol"
 )
 
@@ -13,7 +14,7 @@ type Carnie struct {
 
 func NewCarnie(symbols [][]*symbol.Symbol) *Carnie {
 	c := new(Carnie)
-	c.lives = 3
+	c.lives = constants.LIVES
 	c.winningWord = c.selectWinningWord(symbols)
 	return c
 }
@@ -29,9 +30,9 @@ func (c *Carnie) IsWinner(s *symbol.Symbol) (bool, string) {
 	}
 	fraction := c.findCommonCharacters(s.Str)
 	if c.lives == 0 {
-		return false, "Come back when you get some money buddy"
+		return false, fmt.Sprintf("Come back when you get some money buddy. Winning word is %s", c.winningWord.Str)
 	}
-	return false, fmt.Sprintf("%s letters correct", fraction)
+	return false, fmt.Sprintf("%s letters correct. %d lives remaining", fraction, c.lives)
 }
 func (c *Carnie) findCommonCharacters(s string) string {
 	s1 := []rune(s)
@@ -50,7 +51,7 @@ func (c *Carnie) findCommonCharacters(s string) string {
 }
 func (c *Carnie) selectWinningWord(syms [][]*symbol.Symbol) *symbol.Symbol {
 	var s *symbol.Symbol = nil
-	for s == nil || (s != nil && len(s.Str) <= 1) {
+	for s == nil || (s != nil && len(s.Runes) <= 1) {
 		s = syms[rand.Intn(len(syms))][rand.Intn(len(syms[0]))]
 	}
 	return s

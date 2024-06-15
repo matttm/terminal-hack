@@ -59,6 +59,9 @@ func (c *Cursor) _displace(x, y int) {
 	c.X += x
 	c.Y += y
 	tmp, _ := c.container.GetSymbolAt(c.X, c.Y)
+	if tmp == nil {
+		return
+	}
 	if c.Selection.Id == tmp.Id {
 		c._displace(x, y)
 	}
