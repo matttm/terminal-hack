@@ -2,6 +2,7 @@ package coordinator
 
 import (
 	"math/rand"
+	"timd"
 
 	"github.com/nsf/termbox-go"
 
@@ -12,12 +13,12 @@ import (
 )
 
 type Coordinator struct {
-	width      int
-	height     int
-	players    []int // slice of ids
-	containers int
-	carnie     *carnie.Carnie
-	renderer   []*container.Container
+	width           int
+	height          int
+	players         []int // slice of ids
+	containersCount int
+	carnie          *carnie.Carnie
+	containers      []*container.Container
 }
 
 func Initialize(_containers int) *Coordinator {
@@ -27,7 +28,7 @@ func Initialize(_containers int) *Coordinator {
 }
 func (c *Coordinator) ConstructBoard(_containers int) {
 	err := termbox.Init()
-	c.containers = _containers
+	c.containersCount = _containers
 	if err != nil {
 		panic(err)
 	}
@@ -45,14 +46,38 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 		words[i], words[j] = words[j], words[i]
 	})
 	// subtract 1 so rooom is left for output
-	for i := 0; i < c.containers-1; i++ {
+	for i := 0; i < c.containersCount-1; i++ {
 	}
 	_container := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
 	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
 	_container.InsertWords(words)
-	carnie := carnie.NewCarnie(c.GetSymbols())
+	c.carnie := carnie.NewCarnie(_container.GetSymbols())
 
-	c.RenderContainer()
+	_container.RenderContainer()
 	out.RenderContainer()
-	c.RenderSymbols()
+	_container.RenderSymbols()
+	c.containers[0] = _container
+
+	c.initializeCursor()
+}
+
+func (c *Coordinator) initializeCursor() {
+	sym, err := c.containers[0].GetSymbolAt(0, 0)
+	if err != nil {
+		panic(err)
+	}
+	c.cursor := cursor.InitializeCursor(c, 0, 0, sym)
+	ticker := time.NewTicker(500 * time.Millisecond)
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				// fmt.Println("Blink")
+				c.cursor.Blink()
+			}
+		}
+	}()
+	defer ticker.Stop()
+
+	termbox.Flush()
 }
