@@ -2,20 +2,22 @@ package coordinator
 
 import (
 	"math/rand"
-	"timd"
+	"time"
 
 	"github.com/nsf/termbox-go"
 
 	"terminal_hack/internal/carnie"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
+	"terminal_hack/internal/cursor"
+	"terminal_hack/internal/player"
 	"terminal_hack/internal/utilities"
 )
 
 type Coordinator struct {
 	width           int
 	height          int
-	players         []int // slice of ids
+	players         []player.Player
 	containersCount int
 	carnie          *carnie.Carnie
 	containers      []*container.Container
@@ -51,7 +53,7 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 	_container := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
 	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
 	_container.InsertWords(words)
-	c.carnie := carnie.NewCarnie(_container.GetSymbols())
+	c.carnie = carnie.NewCarnie(_container.GetSymbols())
 
 	_container.RenderContainer()
 	out.RenderContainer()
@@ -66,7 +68,7 @@ func (c *Coordinator) initializeCursor() {
 	if err != nil {
 		panic(err)
 	}
-	c.cursor := cursor.InitializeCursor(c, 0, 0, sym)
+	c.cursor = cursor.InitializeCursor(c.containers[0], 0, 0, sym)
 	ticker := time.NewTicker(500 * time.Millisecond)
 	go func() {
 		for {
