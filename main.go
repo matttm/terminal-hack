@@ -3,13 +3,14 @@ package main
 import (
 	"terminal_hack/internal/carnie"
 	"terminal_hack/internal/coordinator"
-	cooordinator "terminal_hack/internal/cursor"
+	"terminal_hack/internal/player"
 
 	"github.com/nsf/termbox-go"
 )
 
 func main() {
-	coordinator := coordinator.Initialize(2)
+	p := player.CreatePlayer(1)
+	coordinator := coordinator.Initialize(2, p)
 mainloop:
 	for {
 		switch ev := termbox.PollEvent(); ev.Type {
@@ -23,16 +24,16 @@ mainloop:
 				// cursor.Blink()
 				break
 			case termbox.KeyArrowUp:
-				coordinator.Displace(0, -1)
+				coordinator.DisplaceLocal(0, -1)
 				break
 			case termbox.KeyArrowDown:
-				coordinator.Displace(0, 1)
+				coordinator.DisplaceLocal(0, 1)
 				break
 			case termbox.KeyArrowLeft:
-				coordinator.Displace(-1, 0)
+				coordinator.DisplaceLocal(-1, 0)
 				break
 			case termbox.KeyArrowRight:
-				coordinator.Displace(1, 0)
+				coordinator.DisplaceLocal(1, 0)
 				break
 			case termbox.KeyEnter:
 				_, winStr := carnie.IsWinner(coordinator.GetSelectedSymbol())

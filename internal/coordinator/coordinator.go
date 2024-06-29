@@ -16,16 +16,20 @@ import (
 )
 
 type Coordinator struct {
+	localPlayerUuid uuid.UUID
 	width           int
 	height          int
-	players         map[uuid.UUID]player.Player
+	players         map[uuid.UUID]*player.Player
 	containersCount int
 	carnie          *carnie.Carnie
 	containers      []*container.Container
 }
 
-func Initialize(_containers int) *Coordinator {
+func Initialize(_containers int, player *player.Player) *Coordinator {
 	c := new(Coordinator)
+	c.localPlayerUuid = player.Id
+	c.players = make(map[uuid.UUID]*player.Player)
+	c.players[c.localPlayerUuid] = player
 	c.ConstructBoard(_containers)
 	return c
 }
@@ -86,6 +90,9 @@ func (c *Coordinator) initializeCursor() {
 	defer ticker.Stop()
 
 	termbox.Flush()
+}
+func (c *Coordinator) DisplaceLocal(x, y int) {
+	c.Displace(c.localPlayerUuid, x, y)
 }
 
 func (c *Coordinator) Displace(playerUuid uuid.UUID, x, y int) {

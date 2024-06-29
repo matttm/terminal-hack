@@ -1,6 +1,7 @@
 package player
 
 import (
+	"terminal_hack/internal/constants"
 	"terminal_hack/internal/cursor"
 
 	"github.com/google/uuid"
@@ -11,11 +12,11 @@ type Player struct {
 	Cursor *cursor.Cursor
 	Lives  uint
 }
-func createPlayer(addr int, cursor *cursor.Cursor) *Player {
+
+func CreatePlayer(addr int) *Player {
 	id, _ := uuid.NewUUID()
-	p := Player(
-		id,
-		cursor
-	)
+	p := new(Player)
+	p.Id = id
+	p.Lives = constants.LIVES
 	return p
 }
