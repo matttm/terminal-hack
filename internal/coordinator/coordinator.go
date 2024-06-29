@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/nsf/termbox-go"
 
 	"terminal_hack/internal/carnie"
@@ -17,7 +18,7 @@ import (
 type Coordinator struct {
 	width           int
 	height          int
-	players         []player.Player
+	players         map[uuid.UUID]player.Player
 	containersCount int
 	carnie          *carnie.Carnie
 	containers      []*container.Container
@@ -50,6 +51,7 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 	// subtract 1 so rooom is left for output
 	for i := 0; i < c.containersCount-1; i++ {
 	}
+	i := 0
 	_container := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
 	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
 	_container.InsertWords(words)
@@ -58,28 +60,35 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 	_container.RenderContainer()
 	out.RenderContainer()
 	_container.RenderSymbols()
-	c.containers[0] = _container
+	c.containers[i] = _container
 
 	c.initializeCursor()
 }
 
 func (c *Coordinator) initializeCursor() {
-	sym, err := c.containers[0].GetSymbolAt(0, 0)
+	i := 0
+	playerIdx := 0
+	sym, err := c.containers[i].GetSymbolAt(0, 0)
 	if err != nil {
 		panic(err)
 	}
-	c.cursor = cursor.InitializeCursor(c.containers[0], 0, 0, sym)
+	c.players[playerIdx].Cursor = cursor.InitializeCursor(c.containers[i], 0, 0, sym)
 	ticker := time.NewTicker(500 * time.Millisecond)
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
 				// fmt.Println("Blink")
-				c.cursor.Blink()
+				c.players[playerIdx].Cursor.Blink()
 			}
 		}
 	}()
 	defer ticker.Stop()
 
 	termbox.Flush()
+}
+
+func (c *Coordinator) Displace(playerUuid uuid.UUID, x, y int) {
+	c.players[playerUuid].Cursor.Displace(x, y)
+
 }

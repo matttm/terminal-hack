@@ -7,7 +7,15 @@ import (
 )
 
 type Player struct {
-	id     uuid.UUID
-	cursor cursor.Cursor
-	lives  uint
+	Id     uuid.UUID
+	Cursor *cursor.Cursor
+	Lives  uint
+}
+func createPlayer(addr int, cursor *cursor.Cursor) *Player {
+	id, _ := uuid.NewUUID()
+	p := Player(
+		id,
+		cursor
+	)
+	return p
 }
