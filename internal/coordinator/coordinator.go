@@ -41,6 +41,7 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 	defer termbox.Close()
 	termbox.SetInputMode(termbox.InputEsc)
 
+	c.containers = make([]*container.Container, _containers)
 	w, h := termbox.Size()
 	c.width = w
 	c.height = h
@@ -64,30 +65,30 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 	out.RenderContainer()
 	_container.RenderSymbols()
 	c.containers[i] = _container
+	c.containers[_containers-1] = out
 
-	c.initializeCursor()
+	c.initializeCursor(c.localPlayerUuid)
 }
 
-func (c *Coordinator) initializeCursor() {
+func (c *Coordinator) initializeCursor(id uint32) {
 	i := 0
-	playerIdx := c.localPlayerUuid
+	playerId := id
 	sym, err := c.containers[i].GetSymbolAt(0, 0)
 	if err != nil {
 		panic(err)
 	}
-	c.players[playerIdx].Cursor = cursor.InitializeCursor(c.containers[i], 0, 0, sym)
+	c.players[playerId].Cursor = cursor.InitializeCursor(c.containers[i], 0, 0, sym)
 	ticker := time.NewTicker(500 * time.Millisecond)
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
 				// fmt.Println("Blink")
-				c.players[playerIdx].Cursor.Blink()
+				c.players[playerId].Cursor.Blink()
 			}
 		}
 	}()
 	defer ticker.Stop()
-
 	termbox.Flush()
 }
 func (c *Coordinator) DisplaceLocal(x, y int) {
@@ -95,7 +96,9 @@ func (c *Coordinator) DisplaceLocal(x, y int) {
 }
 
 func (c *Coordinator) Displace(playerUuid uint32, x, y int) {
-	c.players[playerUuid].Cursor.Displace(x, y)
+	cursor := c.players[playerUuid].Cursor
+	cursor.ResetSymbol()
+	cursor.Displace(x, y)
 }
 func (c *Coordinator) EvaluatePlayer() {
 	_, winStr := c.carnie.IsWinner(c.players[c.localPlayerUuid].Cursor.GetSelectedSymbol())
