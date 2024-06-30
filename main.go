@@ -1,7 +1,6 @@
 package main
 
 import (
-	"terminal_hack/internal/carnie"
 	"terminal_hack/internal/coordinator"
 	"terminal_hack/internal/player"
 
@@ -16,7 +15,7 @@ mainloop:
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
 			// x, y := cursor.X, cursor.Y
-			coordinator.ResetSymbol()
+			// coordinator.ResetSymbol()
 			switch ev.Key {
 			case termbox.KeyEsc:
 				break mainloop
@@ -36,8 +35,7 @@ mainloop:
 				coordinator.DisplaceLocal(1, 0)
 				break
 			case termbox.KeyEnter:
-				_, winStr := carnie.IsWinner(coordinator.GetSelectedSymbol())
-				out.WriteLine(winStr)
+				coordinator.EvaluatePlayer()
 				break
 			}
 		}

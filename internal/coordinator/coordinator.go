@@ -4,7 +4,6 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/nsf/termbox-go"
 
 	"terminal_hack/internal/carnie"
@@ -16,20 +15,20 @@ import (
 )
 
 type Coordinator struct {
-	localPlayerUuid uuid.UUID
+	localPlayerUuid uint32
 	width           int
 	height          int
-	players         map[uuid.UUID]*player.Player
+	players         map[uint32]*player.Player
 	containersCount int
 	carnie          *carnie.Carnie
 	containers      []*container.Container
 }
 
-func Initialize(_containers int, player *player.Player) *Coordinator {
+func Initialize(_containers int, _player *player.Player) *Coordinator {
 	c := new(Coordinator)
-	c.localPlayerUuid = player.Id
-	c.players = make(map[uuid.UUID]*player.Player)
-	c.players[c.localPlayerUuid] = player
+	c.localPlayerUuid = _player.Id.ID()
+	c.players = make(map[uint32]*player.Player)
+	c.players[c.localPlayerUuid] = _player
 	c.ConstructBoard(_containers)
 	return c
 }
@@ -71,7 +70,7 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 
 func (c *Coordinator) initializeCursor() {
 	i := 0
-	playerIdx := 0
+	playerIdx := c.localPlayerUuid
 	sym, err := c.containers[i].GetSymbolAt(0, 0)
 	if err != nil {
 		panic(err)
@@ -95,7 +94,14 @@ func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.Displace(c.localPlayerUuid, x, y)
 }
 
-func (c *Coordinator) Displace(playerUuid uuid.UUID, x, y int) {
+func (c *Coordinator) Displace(playerUuid uint32, x, y int) {
 	c.players[playerUuid].Cursor.Displace(x, y)
+}
+func (c *Coordinator) EvaluatePlayer() {
+	_, winStr := c.carnie.IsWinner(c.players[c.localPlayerUuid].Cursor.GetSelectedSymbol())
+	c.GetConsole().WriteLine(winStr)
+}
 
+func (c *Coordinator) GetConsole() *container.Container {
+	return c.containers[c.containersCount-1] // console should always be last terminal
 }
