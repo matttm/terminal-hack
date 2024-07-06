@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"terminal_hack/internal/coordinator"
 	"terminal_hack/internal/player"
 
@@ -8,8 +9,19 @@ import (
 )
 
 func main() {
+	fmt.Println("Initializing")
+	err := termbox.Init()
+	if err != nil {
+		panic(err)
+	}
+	defer termbox.Close()
+	termbox.SetInputMode(termbox.InputEsc)
+
+	fmt.Println("Initializing termbox")
 	p := player.CreatePlayer(1)
+	fmt.Println("Constructing player")
 	coordinator := coordinator.Initialize(2, p)
+	termbox.Flush()
 mainloop:
 	for {
 		switch ev := termbox.PollEvent(); ev.Type {

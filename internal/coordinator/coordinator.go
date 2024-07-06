@@ -33,37 +33,31 @@ func Initialize(_containers int, _player *player.Player) *Coordinator {
 	return c
 }
 func (c *Coordinator) ConstructBoard(_containers int) {
-	err := termbox.Init()
 	c.containersCount = _containers
-	if err != nil {
-		panic(err)
-	}
-	defer termbox.Close()
-	termbox.SetInputMode(termbox.InputEsc)
-
 	c.containers = make([]*container.Container, _containers)
 	w, h := termbox.Size()
 	c.width = w
 	c.height = h
 
-	words, _ := utilities.GetWordList(125)
-	words = append(words, utilities.GenerateRandomStrings(500)...)
-
-	rand.Shuffle(len(words), func(i, j int) {
-		words[i], words[j] = words[j], words[i]
-	})
 	// subtract 1 so rooom is left for output
 	for i := 0; i < c.containersCount-1; i++ {
 	}
 	i := 0
 	_container := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
 	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
-	_container.InsertWords(words)
-	c.carnie = carnie.NewCarnie(_container.GetSymbols())
 
 	_container.RenderContainer()
 	out.RenderContainer()
+	words, _ := utilities.GetWordList(125)
+	words = append(words, utilities.GenerateRandomStrings(0)...)
+
+	rand.Shuffle(len(words), func(i, j int) {
+		words[i], words[j] = words[j], words[i]
+	})
+	_container.InsertWords(words)
+	c.carnie = carnie.NewCarnie(_container.GetSymbols())
 	_container.RenderSymbols()
+
 	c.containers[i] = _container
 	c.containers[_containers-1] = out
 
