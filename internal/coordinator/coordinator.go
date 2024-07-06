@@ -45,7 +45,7 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 	// subtract 1 so rooom is left for output
 	for i := 0; i < c.containersCount-1; i++ {
 		_container := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
-		// _container.RenderContainer()
+		_container.RenderContainer()
 		words, _ := utilities.GetWordList(125)
 		words = append(words, utilities.GenerateRandomStrings(109)...)
 
@@ -53,15 +53,15 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 			words[i], words[j] = words[j], words[i]
 		})
 		_container.InsertWords(words)
-		// _container.RenderSymbols()
+		_container.RenderSymbols()
 
 		c.containers[i] = _container
 	}
-	// out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
+	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
 
-	// out.RenderContainer()
+	out.RenderContainer()
 	c.carnie = carnie.NewCarnie(c.containers[0].GetSymbols())
-	/// c.containers[_containers-1] = out
+	c.containers[_containers-1] = out
 
 	c.initializeCursor(c.localPlayerUuid)
 }
@@ -74,10 +74,9 @@ func (c *Coordinator) initializeCursor(id uint32) {
 	go func() {
 		slog.Info("Dispatch Blink thread")
 		for {
-			slog.Info("Inside of debug")
 			select {
 			case <-ticker.C:
-				slog.Info("Blink")
+				slog.Debug("Blink")
 				c.players[playerId].Cursor.Blink()
 			case <-c.doneChan:
 				ticker.Stop()
