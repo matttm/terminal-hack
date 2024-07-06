@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log/slog"
 	"terminal_hack/internal/coordinator"
 	"terminal_hack/internal/player"
 
@@ -9,7 +9,9 @@ import (
 )
 
 func main() {
-	fmt.Println("Initializing")
+
+	doneChan := make(chan bool)
+	slog.Info("Initializing termbox")
 	err := termbox.Init()
 	if err != nil {
 		panic(err)
@@ -17,10 +19,9 @@ func main() {
 	defer termbox.Close()
 	termbox.SetInputMode(termbox.InputEsc)
 
-	fmt.Println("Initializing termbox")
 	p := player.CreatePlayer(1)
-	fmt.Println("Constructing player")
-	coordinator := coordinator.Initialize(2, p)
+	slog.Info("Constructing player")
+	coordinator := coordinator.Initialize(2, p, doneChan)
 	termbox.Flush()
 mainloop:
 	for {
@@ -53,4 +54,5 @@ mainloop:
 		}
 
 	}
+	doneChan <- true
 }

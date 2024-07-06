@@ -1,6 +1,7 @@
 package coordinator
 
 import (
+	"log/slog"
 	"math/rand"
 	"time"
 
@@ -22,11 +23,13 @@ type Coordinator struct {
 	containersCount int
 	carnie          *carnie.Carnie
 	containers      []*container.Container
+	doneChan        chan bool
 }
 
-func Initialize(_containers int, _player *player.Player) *Coordinator {
+func Initialize(_containers int, _player *player.Player, done chan bool) *Coordinator {
 	c := new(Coordinator)
 	c.localPlayerUuid = _player.Id.ID()
+	c.doneChan = done
 	c.players = make(map[uint32]*player.Player)
 	c.players[c.localPlayerUuid] = _player
 	c.ConstructBoard(_containers)
@@ -41,48 +44,48 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 
 	// subtract 1 so rooom is left for output
 	for i := 0; i < c.containersCount-1; i++ {
+		_container := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
+		// _container.RenderContainer()
+		words, _ := utilities.GetWordList(125)
+		words = append(words, utilities.GenerateRandomStrings(109)...)
+
+		rand.Shuffle(len(words), func(i, j int) {
+			words[i], words[j] = words[j], words[i]
+		})
+		_container.InsertWords(words)
+		// _container.RenderSymbols()
+
+		c.containers[i] = _container
 	}
-	i := 0
-	_container := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
-	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
+	// out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
 
-	_container.RenderContainer()
-	out.RenderContainer()
-	words, _ := utilities.GetWordList(125)
-	words = append(words, utilities.GenerateRandomStrings(0)...)
-
-	rand.Shuffle(len(words), func(i, j int) {
-		words[i], words[j] = words[j], words[i]
-	})
-	_container.InsertWords(words)
-	c.carnie = carnie.NewCarnie(_container.GetSymbols())
-	_container.RenderSymbols()
-
-	c.containers[i] = _container
-	c.containers[_containers-1] = out
+	// out.RenderContainer()
+	c.carnie = carnie.NewCarnie(c.containers[0].GetSymbols())
+	/// c.containers[_containers-1] = out
 
 	c.initializeCursor(c.localPlayerUuid)
 }
 
 func (c *Coordinator) initializeCursor(id uint32) {
-	i := 0
+	slog.Info("Initialiing Cursor")
 	playerId := id
-	sym, err := c.containers[i].GetSymbolAt(0, 0)
-	if err != nil {
-		panic(err)
-	}
-	c.players[playerId].Cursor = cursor.InitializeCursor(c.containers[i], 0, 0, sym)
+	c.players[playerId].Cursor = cursor.InitializeCursor(c.containers[0])
 	ticker := time.NewTicker(500 * time.Millisecond)
 	go func() {
+		slog.Info("Dispatch Blink thread")
 		for {
+			slog.Info("Inside of debug")
 			select {
 			case <-ticker.C:
-				// fmt.Println("Blink")
+				slog.Info("Blink")
 				c.players[playerId].Cursor.Blink()
+			case <-c.doneChan:
+				ticker.Stop()
+				return
 			}
 		}
 	}()
-	defer ticker.Stop()
+	// defer ticker.Stop()
 	termbox.Flush()
 }
 func (c *Coordinator) DisplaceLocal(x, y int) {
