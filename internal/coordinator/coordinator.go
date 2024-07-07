@@ -24,6 +24,7 @@ type Coordinator struct {
 	carnie          *carnie.Carnie
 	containers      []*container.Container
 	doneChan        chan bool
+	op              *operor.Operator
 }
 
 func Initialize(_containers int, _player *player.Player, done chan bool) *Coordinator {

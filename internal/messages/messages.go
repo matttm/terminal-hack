@@ -1,10 +1,23 @@
 package messages
 
-import "terminal_hack/internal/player"
+import (
+	"terminal_hack/internal/player"
+	"terminal_hack/internal/symbol"
+)
 
 type AddPlayer struct {
-	srcId  uint32
-	dstId  uint32
-	player player.Player
+	SrcId  uint32
+	DstId  uint32
+	Player player.Player
 }
-type PlayerRoster struct{}
+type PlayerRoster struct {
+	SrcId     uint32
+	DstId     uint32
+	Players   []player.Player
+	GameBoard [][]symbol.Symbol
+}
+type PlayerMove struct {
+	SrcId  uint32
+	DstId  uint32
+	Player player.Player
+}
