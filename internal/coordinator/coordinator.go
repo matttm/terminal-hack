@@ -11,6 +11,7 @@ import (
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
+	"terminal_hack/internal/operator"
 	"terminal_hack/internal/player"
 	"terminal_hack/internal/utilities"
 )
@@ -24,7 +25,7 @@ type Coordinator struct {
 	carnie          *carnie.Carnie
 	containers      []*container.Container
 	doneChan        chan bool
-	op              *operor.Operator
+	op              *operator.Operator
 }
 
 func Initialize(_containers int, _player *player.Player, done chan bool) *Coordinator {
@@ -33,6 +34,7 @@ func Initialize(_containers int, _player *player.Player, done chan bool) *Coordi
 	c.doneChan = done
 	c.players = make(map[uint32]*player.Player)
 	c.players[c.localPlayerUuid] = _player
+	c.op = operator.Initialize(done)
 	c.ConstructBoard(_containers)
 	return c
 }

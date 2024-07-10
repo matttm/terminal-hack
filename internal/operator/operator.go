@@ -1,4 +1,4 @@
-package coordinator
+package operator
 
 import (
 	"context"
@@ -32,17 +32,17 @@ type Operator struct {
 }
 
 func Initialize(done chan bool) *Operator {
-	c := new(Operator)
-	c.doneChan = done
-	return c
+	o := new(Operator)
+	o.doneChan = done
+	return o
 }
-func (c *Operator) initializePubsub() {
+func (o *Operator) initializePubsub() {
 	// parse some flags to set our nickname and the room to join
 	// nickFlag := flag.String("nick", "", "nickname to use in chat. will be generated if empty")
 	// roomFlag := flag.String("room", "awesome-chat-room", "name of chat room to join")
 	flag.Parse()
 
-	ctx := context.Background()
+	o.ctx = context.Background()
 
 	// create a new libp2p Host that listens on a random TCP port
 	h, err := libp2p.New(libp2p.ListenAddrStrings("/ip4/0.0.0.0/tcp/0"))
@@ -51,7 +51,7 @@ func (c *Operator) initializePubsub() {
 	}
 
 	// create a new PubSub service using the GossipSub router
-	ps, err := pubsub.NewGossipSub(ctx, h)
+	ps, err := pubsub.NewGossipSub(o.ctx, h)
 	if err != nil {
 		panic(err)
 	}
@@ -60,6 +60,7 @@ func (c *Operator) initializePubsub() {
 	if err := setupDiscovery(h); err != nil {
 		panic(err)
 	}
+	subscribeAndDispatch(o.ctx, ps)
 }
 
 // discoveryNotifee gets notified when we find a new peer via mDNS discovery
@@ -84,4 +85,20 @@ func setupDiscovery(h host.Host) error {
 	// setup mDNS discovery to find local peers
 	s := mdns.NewMdnsService(h, DiscoveryServiceTag, &discoveryNotifee{h: h})
 	return s.Start()
+}
+func subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) {
+	topic := "MESSAGE"
+	_topic, _ := ps.Join(topic)
+	sub, _ := _topic.Subscribe()
+	go readLoop(ctx, sub)
+
+}
+func readLoop(ctx context.Context, sub *pubsub.Subscription) {
+	for {
+		msg, _ := sub.Next(ctx)
+		switch msg {
+		}
+	}
+}
+func sendMessage(topic string, msg interface{}) {
 }
