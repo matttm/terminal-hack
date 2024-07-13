@@ -92,6 +92,7 @@ func (c *Coordinator) initializeCursor(id uint32) {
 }
 func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.Displace(c.localPlayerUuid, x, y)
+	c.op.SendMessage()
 }
 
 func (c *Coordinator) Displace(playerUuid uint32, x, y int) {

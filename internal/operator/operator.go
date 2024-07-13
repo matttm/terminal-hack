@@ -2,7 +2,9 @@ package operator
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -72,10 +74,10 @@ type discoveryNotifee struct {
 // the PubSub system will automatically start interacting with them if they also
 // support PubSub.
 func (n *discoveryNotifee) HandlePeerFound(pi peer.AddrInfo) {
-	slog.Info("discovered new peer %s\n", pi.ID)
+	slog.Info(fmt.Sprintf("discovered new peer %s\n", pi.ID.String()))
 	err := n.h.Connect(context.Background(), pi)
 	if err != nil {
-		slog.Error("error connecting to peer %s: %s\n", pi.ID, err)
+		slog.Error("error connecting to peer %s: %s\n", pi.ID.String(), err)
 	}
 }
 
@@ -96,9 +98,18 @@ func subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) {
 func readLoop(ctx context.Context, sub *pubsub.Subscription) {
 	for {
 		msg, _ := sub.Next(ctx)
-		switch msg {
+		switch msg.GetTopic() {
+		case "MESSAGE":
+			break
 		}
 	}
 }
-func sendMessage(topic string, msg interface{}) {
+func (o *Operator) SendMessage(topic string, msg interface{}) {
+	raw, err := json.Marshal(msg)
+	if err != nil {
+		panic(err)
+	}
+	topic, _ := o.ps.Join(topic)
+	o.ps.Publish(topic, raw)
+
 }
