@@ -109,7 +109,7 @@ func (o *Operator) SendMessage(topic string, msg interface{}) {
 	if err != nil {
 		panic(err)
 	}
-	topic, _ := o.ps.Join(topic)
-	o.ps.Publish(topic, raw)
+	_topic, _ := o.ps.Join(topic)
+	_topic.Publish(o.ctx, raw)
 
 }

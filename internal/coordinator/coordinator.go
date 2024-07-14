@@ -11,6 +11,7 @@ import (
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
+	"terminal_hack/internal/messages"
 	"terminal_hack/internal/operator"
 	"terminal_hack/internal/player"
 	"terminal_hack/internal/utilities"
@@ -92,7 +93,7 @@ func (c *Coordinator) initializeCursor(id uint32) {
 }
 func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.Displace(c.localPlayerUuid, x, y)
-	c.op.SendMessage()
+	c.op.SendMessage("MESSAGE", messages.PlayerMove{SrcId: c.localPlayerUuid, DstId: 0, Player: *c.players[c.localPlayerUuid]})
 }
 
 func (c *Coordinator) Displace(playerUuid uint32, x, y int) {
