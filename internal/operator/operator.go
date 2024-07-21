@@ -100,6 +100,12 @@ func readLoop(ctx context.Context, sub *pubsub.Subscription) {
 		msg, _ := sub.Next(ctx)
 		switch msg.GetTopic() {
 		case "MESSAGE":
+			bytes := msg.GetData()
+			payload :=
+			err := json.Unmarshal(bytes, payload)
+			id err != nil {
+				panic)(err)
+			}
 			break
 		}
 	}
