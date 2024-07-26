@@ -33,6 +33,12 @@ type Operator struct {
 	doneChan chan bool
 }
 
+type GameMessage struct {
+	MesssgeType uint32
+	PlayerId uint32 // player id that commit action
+	PlayerState Player  // this should be a deep copy of player
+}
+
 func Initialize(done chan bool) *Operator {
 	o := new(Operator)
 	o.doneChan = done
@@ -98,12 +104,16 @@ func subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) {
 func readLoop(ctx context.Context, sub *pubsub.Subscription) {
 	for {
 		msg, _ := sub.Next(ctx)
+		// only forward messages delivered by others
+		if msg.ReceivedFrom == cr.self {
+			continue
+		}
 		switch msg.GetTopic() {
 		case "MESSAGE":
 			bytes := msg.GetData()
-			payload :=
+			payload := new(GameMessage)
 			err := json.Unmarshal(bytes, payload)
-			id err != nil {
+			if err != nil {
 				panic)(err)
 			}
 			break
