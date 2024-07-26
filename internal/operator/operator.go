@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"terminal_hack/internal/player"
 	"time"
 
 	"github.com/libp2p/go-libp2p"
@@ -35,8 +36,8 @@ type Operator struct {
 
 type GameMessage struct {
 	MesssgeType uint32
-	PlayerId uint32 // player id that commit action
-	PlayerState Player  // this should be a deep copy of player
+	PlayerId    uint32        // player id that commit action
+	PlayerState player.Player // this should be a deep copy of player
 }
 
 func Initialize(done chan bool) *Operator {
@@ -68,7 +69,7 @@ func (o *Operator) initializePubsub() {
 	if err := setupDiscovery(h); err != nil {
 		panic(err)
 	}
-	subscribeAndDispatch(o.ctx, ps)
+	o.subscribeAndDispatch(o.ctx, ps)
 }
 
 // discoveryNotifee gets notified when we find a new peer via mDNS discovery
@@ -94,18 +95,18 @@ func setupDiscovery(h host.Host) error {
 	s := mdns.NewMdnsService(h, DiscoveryServiceTag, &discoveryNotifee{h: h})
 	return s.Start()
 }
-func subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) {
+func (o *Operator) subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) {
 	topic := "MESSAGE"
 	_topic, _ := ps.Join(topic)
 	sub, _ := _topic.Subscribe()
-	go readLoop(ctx, sub)
+	go readLoop(ctx, o.self, sub)
 
 }
-func readLoop(ctx context.Context, sub *pubsub.Subscription) {
+func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription) {
 	for {
 		msg, _ := sub.Next(ctx)
 		// only forward messages delivered by others
-		if msg.ReceivedFrom == cr.self {
+		if msg.ReceivedFrom == id {
 			continue
 		}
 		switch msg.GetTopic() {
@@ -114,7 +115,7 @@ func readLoop(ctx context.Context, sub *pubsub.Subscription) {
 			payload := new(GameMessage)
 			err := json.Unmarshal(bytes, payload)
 			if err != nil {
-				panic)(err)
+				panic(err)
 			}
 			break
 		}

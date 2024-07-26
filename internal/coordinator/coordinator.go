@@ -36,7 +36,8 @@ func Initialize(_containers int, _player *player.Player, done chan bool) *Coordi
 	c.players = make(map[uint32]*player.Player)
 	c.players[c.localPlayerUuid] = _player
 	c.op = operator.Initialize(done)
-	c.ConstructBoard(_containers)
+	c.op.
+		c.ConstructBoard(_containers)
 	return c
 }
 func (c *Coordinator) ConstructBoard(_containers int) {
