@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"terminal_hack/internal/coordinator"
 	"terminal_hack/internal/player"
 	"time"
 
@@ -23,7 +24,8 @@ const DiscoveryInterval = time.Minute
 const DiscoveryServiceTag = "terminal-hack"
 
 type Operator struct {
-	Messages chan *interface{}
+	Messages    chan *interface{}
+	Coordinator *coordinator.Coordinator
 
 	ctx   context.Context
 	ps    *pubsub.PubSub
@@ -35,14 +37,15 @@ type Operator struct {
 }
 
 type GameMessage struct {
-	MesssgeType uint32
+	MessageType uint32
 	PlayerId    uint32        // player id that commit action
 	PlayerState player.Player // this should be a deep copy of player
 }
 
-func Initialize(done chan bool) *Operator {
+func Initialize(coordinator_ *coordinator.Coordinator, done chan bool) *Operator {
 	o := new(Operator)
 	o.doneChan = done
+	o.Coordinator = coordinator_
 	return o
 }
 func (o *Operator) initializePubsub() {
@@ -99,10 +102,10 @@ func (o *Operator) subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) 
 	topic := "MESSAGE"
 	_topic, _ := ps.Join(topic)
 	sub, _ := _topic.Subscribe()
-	go readLoop(ctx, o.self, sub)
+	go readLoop(ctx, o.self, sub, o.Coordinator)
 
 }
-func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription) {
+func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, _coordinator *coordinator.Coordinator) {
 	for {
 		msg, _ := sub.Next(ctx)
 		// only forward messages delivered by others
@@ -116,6 +119,11 @@ func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription) {
 			err := json.Unmarshal(bytes, payload)
 			if err != nil {
 				panic(err)
+			}
+			switch payload.MessageType {
+			case 1: // player position update
+				_coordinator.UpdatePlayer(payload.PlayerId, payload.PlayerState)
+				break
 			}
 			break
 		}
