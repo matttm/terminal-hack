@@ -26,7 +26,7 @@ type Coordinator struct {
 	carnie          *carnie.Carnie
 	containers      []*container.Container
 	doneChan        chan bool
-	op              *operator.Operator
+	SelfPlayerState *interface{}
 }
 
 func Initialize(_containers int, _player *player.Player, done chan bool) *Coordinator {
@@ -35,9 +35,11 @@ func Initialize(_containers int, _player *player.Player, done chan bool) *Coordi
 	c.doneChan = done
 	c.players = make(map[uint32]*player.Player)
 	c.players[c.localPlayerUuid] = _player
-	c.op = operator.Initialize(done)
-	c.op.
-		c.ConstructBoard(_containers)
+        c.SelfPlayerState = make(chan *interface{})
+
+	op := operator.New(c, selfPlayerState, c.doneChan)
+	op.InitializePubsub()
+	c.ConstructBoard(_containers)
 	return c
 }
 func (c *Coordinator) ConstructBoard(_containers int) {
@@ -94,7 +96,7 @@ func (c *Coordinator) initializeCursor(id uint32) {
 }
 func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.Displace(c.localPlayerUuid, x, y)
-	c.op.SendMessage("MESSAGE", messages.PlayerMove{SrcId: c.localPlayerUuid, DstId: 0, Player: *c.players[c.localPlayerUuid]})
+	c.SelfPlayerState <- {"MESSAGE", messages.PlayerMove{SrcId: c.localPlayerUuid, DstId: 0, Player: *c.players[c.localPlayerUuid] }
 }
 
 func (c *Coordinator) Displace(playerUuid uint32, x, y int) {

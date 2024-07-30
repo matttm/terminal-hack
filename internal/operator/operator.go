@@ -24,8 +24,9 @@ const DiscoveryInterval = time.Minute
 const DiscoveryServiceTag = "terminal-hack"
 
 type Operator struct {
-	Messages    chan *interface{}
-	Coordinator *coordinator.Coordinator
+	Messages        chan *interface{}
+	SelfPlayerState chan *interface{} // TODO: can this bw added in a select {} with .Next()?
+	Coordinator     *coordinator.Coordinator
 
 	ctx   context.Context
 	ps    *pubsub.PubSub
@@ -42,13 +43,14 @@ type GameMessage struct {
 	PlayerState player.Player // this should be a deep copy of player
 }
 
-func Initialize(coordinator_ *coordinator.Coordinator, done chan bool) *Operator {
+func New(coordinator_ *coordinator.Coordinator, selfPlayerState chan *interface{}, done chan bool) *Operator {
 	o := new(Operator)
 	o.doneChan = done
 	o.Coordinator = coordinator_
+	o.SelfPlayerState = selfPlayerState
 	return o
 }
-func (o *Operator) initializePubsub() {
+func (o *Operator) InitializePubsub() {
 	// parse some flags to set our nickname and the room to join
 	// nickFlag := flag.String("nick", "", "nickname to use in chat. will be generated if empty")
 	// roomFlag := flag.String("room", "awesome-chat-room", "name of chat room to join")
