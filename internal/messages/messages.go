@@ -21,3 +21,9 @@ type PlayerMove struct {
 	DstId  uint32
 	Player player.Player
 }
+type GameMessage struct {
+	MessageType uint32
+	PlayerId    uint32        // player id that commit action
+	PlayerState player.Player // this should be a deep copy of player
+}
+const MessageTypes = {}

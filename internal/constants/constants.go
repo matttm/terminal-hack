@@ -17,3 +17,5 @@ const INSET = 1
 const TEXT_PADDING = 2
 
 const LIVES = 5
+
+const TOPIC = "MESSAGE"

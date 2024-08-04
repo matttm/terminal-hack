@@ -6,7 +6,9 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"terminal_hack/internal/constants"
 	"terminal_hack/internal/coordinator"
+	"terminal_hack/internal/messages"
 	"terminal_hack/internal/player"
 	"time"
 
@@ -37,12 +39,6 @@ type Operator struct {
 	doneChan chan bool
 }
 
-type GameMessage struct {
-	MessageType uint32
-	PlayerId    uint32        // player id that commit action
-	PlayerState player.Player // this should be a deep copy of player
-}
-
 func New(coordinator_ *coordinator.Coordinator, done chan bool) *Operator {
 	o := new(Operator)
 	o.doneChan = done
@@ -50,7 +46,7 @@ func New(coordinator_ *coordinator.Coordinator, done chan bool) *Operator {
 	o.SelfPlayerState = coordinator_.SelfPlayerState
 	return o
 }
-func (o *Operator) InitializePubsub() {
+func (o *Operator) InitializePubsub(player_ *player.Player) {
 	// parse some flags to set our nickname and the room to join
 	// nickFlag := flag.String("nick", "", "nickname to use in chat. will be generated if empty")
 	// roomFlag := flag.String("room", "awesome-chat-room", "name of chat room to join")
@@ -75,6 +71,9 @@ func (o *Operator) InitializePubsub() {
 		panic(err)
 	}
 	o.subscribeAndDispatch(o.ctx, ps)
+	// TODO: add check to see if there any peers
+	// send new player
+	o.SendMessage(constants.TOPIC, messages.GameMessage{MessageType: 1, PlayerId: player_.Id.ID(), PlayerState: *player_})
 }
 
 // discoveryNotifee gets notified when we find a new peer via mDNS discovery

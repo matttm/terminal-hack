@@ -38,7 +38,7 @@ func Initialize(_containers int, _player *player.Player, done chan bool) *Coordi
         c.SelfPlayerState = make(chan *interface{})
 
 	op := operator.New(c, selfPlayerState, c.doneChan)
-	op.InitializePubsub()
+	op.InitializePubsub(_player)
 	c.ConstructBoard(_containers)
 	return c
 }
