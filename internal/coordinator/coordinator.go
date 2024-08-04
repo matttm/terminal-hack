@@ -26,7 +26,7 @@ type Coordinator struct {
 	carnie          *carnie.Carnie
 	containers      []*container.Container
 	doneChan        chan bool
-	SelfPlayerState *interface{}
+	SelfPlayerState chan *interface{}
 }
 
 func Initialize(_containers int, _player *player.Player, done chan bool) *Coordinator {
@@ -111,4 +111,11 @@ func (c *Coordinator) EvaluatePlayer() {
 
 func (c *Coordinator) GetConsole() *container.Container {
 	return c.containers[c.containersCount-1] // console should always be last terminal
+}
+func (c *Coordinator) UpdatePlayer(id uint32, player *player.Player) {
+	p := c.players[id]
+	p.Cursor.ResetSymbol()
+	p.Cursor.X = player.Cursor.X
+	p.Cursor.Y = player.Cursor.Y
+	p.Cursor.Selection = player.Cursor.Selection
 }

@@ -43,11 +43,11 @@ type GameMessage struct {
 	PlayerState player.Player // this should be a deep copy of player
 }
 
-func New(coordinator_ *coordinator.Coordinator, selfPlayerState chan *interface{}, done chan bool) *Operator {
+func New(coordinator_ *coordinator.Coordinator, done chan bool) *Operator {
 	o := new(Operator)
 	o.doneChan = done
 	o.Coordinator = coordinator_
-	o.SelfPlayerState = selfPlayerState
+	o.SelfPlayerState = coordinator_.SelfPlayerState
 	return o
 }
 func (o *Operator) InitializePubsub() {
