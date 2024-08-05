@@ -123,9 +123,9 @@ func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, _coordi
 			}
 			switch payload.MessageType {
 			case messages.PlayerMoveType: // player position update
-				var playerMove messages.PlayerMove = messages.PlayerMove(payload.Data)
+				var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
 
-				_coordinator.UpdatePlayer(payload.PlayerId, payload.PlayerState)
+				_coordinator.UpdatePlayer(playerMove.PlayerId, playerMove.PlayerState)
 				break
 			case messages.AddPlayerType:
 				break
