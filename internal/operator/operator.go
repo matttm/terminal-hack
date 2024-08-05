@@ -116,14 +116,20 @@ func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, _coordi
 		switch msg.GetTopic() {
 		case "MESSAGE":
 			bytes := msg.GetData()
-			payload := new(GameMessage)
+			payload := new(messages.GameMessage)
 			err := json.Unmarshal(bytes, payload)
 			if err != nil {
 				panic(err)
 			}
 			switch payload.MessageType {
-			case 1: // player position update
+			case messages.PlayerMoveType: // player position update
+				var playerMove messages.PlayerMove = messages.PlayerMove(payload.Data)
+
 				_coordinator.UpdatePlayer(payload.PlayerId, payload.PlayerState)
+				break
+			case messages.AddPlayerType:
+				break
+			case messages.GameBoardType:
 				break
 			}
 			break

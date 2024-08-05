@@ -10,11 +10,8 @@ type AddPlayer struct {
 	DstId  uint32
 	Player player.Player
 }
-type PlayerRoster struct {
-	SrcId     uint32
-	DstId     uint32
-	Players   []player.Player
-	GameBoard [][]symbol.Symbol
+type GameBoard struct {
+	Symbols [][]symbol.Symbol
 }
 type PlayerMove struct {
 	SrcId  uint32
@@ -23,7 +20,11 @@ type PlayerMove struct {
 }
 type GameMessage struct {
 	MessageType uint32
-	PlayerId    uint32        // player id that commit action
-	PlayerState player.Player // this should be a deep copy of player
+	Data        interface{}
 }
-const MessageTypes = {}
+
+const (
+	AddPlayerType  = iota
+	PlayerMoveType = iota
+	GameBoardType  = iota
+)
