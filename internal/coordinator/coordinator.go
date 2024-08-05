@@ -14,6 +14,7 @@ import (
 	"terminal_hack/internal/messages"
 	"terminal_hack/internal/operator"
 	"terminal_hack/internal/player"
+	"terminal_hack/internal/symbol"
 	"terminal_hack/internal/utilities"
 )
 
@@ -119,3 +120,8 @@ func (c *Coordinator) UpdatePlayer(id uint32, player *player.Player) {
 	p.Cursor.Y = player.Cursor.Y
 	p.Cursor.Selection = player.Cursor.Selection
 }
+func (c *Coordinator) getGameboard() [][][]symbol.Symbol {
+	gameboard := make([][][]symbol.Symbol, c.containersCount)
+	return gameboard
+}
+
