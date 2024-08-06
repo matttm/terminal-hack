@@ -73,7 +73,16 @@ func (o *Operator) InitializePubsub(player_ *player.Player) {
 	o.subscribeAndDispatch(o.ctx, ps)
 	// TODO: add check to see if there any peers
 	// send new player
-	o.SendMessage(constants.TOPIC, messages.GameMessage{MessageType: 1, PlayerId: player_.Id.ID(), PlayerState: *player_})
+	if len(o.ps.ListPeers(constants.TOPIC)) > 0 {
+		o.SendMessage(
+			constants.TOPIC,
+			messages.GameMessage{
+				MessageType: messages.AddPlayerType, Data: messages.AddPlayer{
+					Player: o.Coordinator.SelfPlayerState,
+				},
+			},
+		)
+	}
 }
 
 // discoveryNotifee gets notified when we find a new peer via mDNS discovery
@@ -124,8 +133,9 @@ func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, _coordi
 			switch payload.MessageType {
 			case messages.PlayerMoveType: // player position update
 				var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
+				player := playerMove.Player
 
-				_coordinator.UpdatePlayer(playerMove.PlayerId, playerMove.PlayerState)
+				_coordinator.UpdatePlayer(player.Id.ID(), &player)
 				break
 			case messages.AddPlayerType:
 				break

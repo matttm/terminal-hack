@@ -12,7 +12,6 @@ import (
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/messages"
-	"terminal_hack/internal/operator"
 	"terminal_hack/internal/player"
 	"terminal_hack/internal/symbol"
 	"terminal_hack/internal/utilities"
@@ -97,7 +96,10 @@ func (c *Coordinator) initializeCursor(id uint32) {
 }
 func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.Displace(c.localPlayerUuid, x, y)
-	c.SelfPlayerState <- {"MESSAGE", messages.PlayerMove{SrcId: c.localPlayerUuid, DstId: 0, Player: *c.players[c.localPlayerUuid] }
+	c.SelfPlayerState <- messages.GameMessage {
+	"MESSAGE",
+	messages.PlayerMove{SrcId: c.localPlayerUuid, DstId: 0, Player: c.GetLocalPlayer(),
+	}
 }
 
 func (c *Coordinator) Displace(playerUuid uint32, x, y int) {
@@ -120,8 +122,11 @@ func (c *Coordinator) UpdatePlayer(id uint32, player *player.Player) {
 	p.Cursor.Y = player.Cursor.Y
 	p.Cursor.Selection = player.Cursor.Selection
 }
-func (c *Coordinator) getGameboard() [][][]symbol.Symbol {
+func (c *Coordinator) getGameboard() ([][][]symbol.Symbol) {
 	gameboard := make([][][]symbol.Symbol, c.containersCount)
 	return gameboard
+}
+func (c *Coordinator) GetLocalPlayer() *player.Player {
+	return c.players[c.localPlayerUuid]
 }
 
