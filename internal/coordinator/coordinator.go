@@ -97,8 +97,8 @@ func (c *Coordinator) initializeCursor(id uint32) {
 func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.Displace(c.localPlayerUuid, x, y)
 	c.SelfPlayerState <- messages.GameMessage {
-	"MESSAGE",
-	messages.PlayerMove{SrcId: c.localPlayerUuid, DstId: 0, Player: c.GetLocalPlayer(),
+		"MESSAGE",
+		messages.PlayerMove{SrcId: c.localPlayerUuid, DstId: 0, Player: c.GetLocalPlayer()}
 	}
 }
 
