@@ -75,13 +75,13 @@ func (o *Operator) InitializePubsub(player_ *player.Player) {
 	// send new player
 	if len(o.ps.ListPeers(constants.TOPIC)) > 0 {
 		o.SendMessage(
-			constants.TOPIC,
+			messages.AddPlayerType,
 			messages.GameMessage{
-				MessageType: messages.AddPlayerType, Data: messages.AddPlayer{
+				MessageType: messages.AddPlayerType,
+				Data: messages.AddPlayer{
 					Player: o.Coordinator.GetLocalPlayer(),
 				},
-			},
-		)
+			})
 	}
 }
 

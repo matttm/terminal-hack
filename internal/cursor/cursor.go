@@ -84,3 +84,7 @@ func (c *Cursor) GetSelectedSymbol() *symbol.Symbol {
 	}
 	return sym
 }
+func (c *Cursor) clone() *Cursor {
+	_c := Cursor{}
+	return _c
+}
