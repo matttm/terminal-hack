@@ -20,11 +20,8 @@ func CreatePlayer(addr int) *Player {
 	p.Lives = constants.LIVES
 	return p
 }
-func (p *Player) clone() *Player {
-	_p := Player{
-		Id:     p.Id,
-		Cursor: p.Cursor.clone(),
-		Lives:  p.Lives,
-	}
+func (p *Player) Clone() *Player {
+	_p := new(Player)
+	// TODO:
 	return _p
 }

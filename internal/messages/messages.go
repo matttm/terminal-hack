@@ -19,12 +19,12 @@ type PlayerMove struct {
 	Player player.Player
 }
 type GameMessage struct {
-	MessageType uint32
+	MessageType string
 	Data        interface{}
 }
 
 const (
-	AddPlayerType  = iota
-	PlayerMoveType = iota
-	GameBoardType  = iota
+	AddPlayerType  = "ADD_PLAYER"
+	PlayerMoveType = "PLAYEER_MOVE"
+	GameBoardType  = "GAMEBOARD_STATE"
 )

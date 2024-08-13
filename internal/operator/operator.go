@@ -79,7 +79,7 @@ func (o *Operator) InitializePubsub(player_ *player.Player) {
 			messages.GameMessage{
 				MessageType: messages.AddPlayerType,
 				Data: messages.AddPlayer{
-					Player: o.Coordinator.GetLocalPlayer(),
+					Player: *o.Coordinator.GetLocalPlayer().Clone(),
 				},
 			})
 	}
@@ -146,7 +146,7 @@ func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, _coordi
 		}
 	}
 }
-func (o *Operator) SendMessage(topic string, msg *interface{}) {
+func (o *Operator) SendMessage(topic string, msg interface{}) {
 	raw, err := json.Marshal(msg)
 	if err != nil {
 		panic(err)
