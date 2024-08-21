@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log/slog"
 	"terminal_hack/internal/constants"
-	"terminal_hack/internal/coordinator"
 	"terminal_hack/internal/messages"
 	"terminal_hack/internal/player"
 	"time"
@@ -26,9 +25,8 @@ const DiscoveryInterval = time.Minute
 const DiscoveryServiceTag = "terminal-hack"
 
 type Operator struct {
-	Messages        chan *interface{}
+	Messages        chan *pubsub.Message
 	SelfPlayerState chan *interface{} // TODO: can this bw added in a select {} with .Next()?
-	Coordinator     *coordinator.Coordinator
 
 	ctx   context.Context
 	ps    *pubsub.PubSub
@@ -39,11 +37,9 @@ type Operator struct {
 	doneChan chan bool
 }
 
-func New(coordinator_ *coordinator.Coordinator, done chan bool) *Operator {
+func New(done chan bool) *Operator {
 	o := new(Operator)
 	o.doneChan = done
-	o.Coordinator = coordinator_
-	o.SelfPlayerState = coordinator_.SelfPlayerState
 	return o
 }
 func (o *Operator) InitializePubsub(player_ *player.Player) {
@@ -112,38 +108,17 @@ func (o *Operator) subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) 
 	topic := "MESSAGE"
 	_topic, _ := ps.Join(topic)
 	sub, _ := _topic.Subscribe()
-	go readLoop(ctx, o.self, sub, o.Coordinator)
+	go readLoop(ctx, o.self, sub, o.Messages)
 
 }
-func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, _coordinator *coordinator.Coordinator) {
+func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, msgs chan *pubsub.Message) {
 	for {
 		msg, _ := sub.Next(ctx)
 		// only forward messages delivered by others
 		if msg.ReceivedFrom == id {
 			continue
 		}
-		switch msg.GetTopic() {
-		case "MESSAGE":
-			bytes := msg.GetData()
-			payload := new(messages.GameMessage)
-			err := json.Unmarshal(bytes, payload)
-			if err != nil {
-				panic(err)
-			}
-			switch payload.MessageType {
-			case messages.PlayerMoveType: // player position update
-				var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
-				player := playerMove.Player
-
-				_coordinator.UpdatePlayer(player.Id.ID(), &player)
-				break
-			case messages.AddPlayerType:
-				break
-			case messages.GameBoardType:
-				break
-			}
-			break
-		}
+		msgs <- msg
 	}
 }
 func (o *Operator) SendMessage(topic string, msg interface{}) {

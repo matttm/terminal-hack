@@ -12,10 +12,13 @@ import (
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/messages"
+	"terminal_hack/internal/operator"
 	"terminal_hack/internal/player"
 	"terminal_hack/internal/symbol"
 	"terminal_hack/internal/utilities"
 )
+
+// TODO:
 
 type Coordinator struct {
 	localPlayerUuid uint32
@@ -26,6 +29,7 @@ type Coordinator struct {
 	carnie          *carnie.Carnie
 	containers      []*container.Container
 	doneChan        chan bool
+	op              *operator.Operator
 	SelfPlayerState chan *interface{}
 }
 
@@ -35,10 +39,10 @@ func Initialize(_containers int, _player *player.Player, done chan bool) *Coordi
 	c.doneChan = done
 	c.players = make(map[uint32]*player.Player)
 	c.players[c.localPlayerUuid] = _player
-        c.SelfPlayerState = make(chan *interface{})
+	c.SelfPlayerState = make(chan *interface{})
 
-	op := operator.New(c, selfPlayerState, c.doneChan)
-	op.InitializePubsub(_player)
+	c.op := operator.New(c.doneChan)
+	c.op.InitializePubsub(_player)
 	c.ConstructBoard(_containers)
 	return c
 }
@@ -94,11 +98,45 @@ func (c *Coordinator) initializeCursor(id uint32) {
 	// defer ticker.Stop()
 	termbox.Flush()
 }
+func (c *Coordinator) listenToPeers() {
+	select {
+	case <-c.op.Messages:
+		switch msg.GetTopic() {
+		case "MESSAGE":
+			bytes := msg.GetData()
+			payload := new(messages.GameMessage)
+			err := json.Unmarshal(bytes, payload)
+			if err != nil {
+				panic(err)
+			}
+			switch payload.MessageType {
+			case messages.PlayerMoveType: // player position update
+				var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
+				player := playerMove.Player
+
+				_coordinator.UpdatePlayer(player.Id.ID(), &player)
+				break
+			case messages.AddPlayerType:
+				break
+			case messages.GameBoardType:
+				break
+			}
+			break
+		}
+	case <-c.doneChan:
+		break
+
+	}
+}
 func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.Displace(c.localPlayerUuid, x, y)
-	c.SelfPlayerState <- messages.GameMessage {
-		"MESSAGE",
-		messages.PlayerMove{SrcId: c.localPlayerUuid, DstId: 0, Player: c.GetLocalPlayer()}
+	c.SelfPlayerState <- messages.GameMessage{
+		MessageType: "MESSAGE",
+		Data: messages.PlayerMove{
+			SrcId:  c.localPlayerUuid,
+			DstId:  0,
+			Player: c.GetLocalPlayer(),
+		},
 	}
 }
 
@@ -122,11 +160,10 @@ func (c *Coordinator) UpdatePlayer(id uint32, player *player.Player) {
 	p.Cursor.Y = player.Cursor.Y
 	p.Cursor.Selection = player.Cursor.Selection
 }
-func (c *Coordinator) getGameboard() ([][][]symbol.Symbol) {
+func (c *Coordinator) getGameboard() [][][]symbol.Symbol {
 	gameboard := make([][][]symbol.Symbol, c.containersCount)
 	return gameboard
 }
 func (c *Coordinator) GetLocalPlayer() *player.Player {
 	return c.players[c.localPlayerUuid]
 }
-
