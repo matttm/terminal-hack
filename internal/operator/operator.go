@@ -75,7 +75,7 @@ func (o *Operator) InitializePubsub(player_ *player.Player) {
 			messages.GameMessage{
 				MessageType: messages.AddPlayerType,
 				Data: messages.AddPlayer{
-					Player: *o.Coordinator.GetLocalPlayer().Clone(),
+					Player: *player_.Clone(),
 				},
 			})
 	}

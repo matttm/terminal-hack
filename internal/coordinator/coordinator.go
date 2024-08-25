@@ -1,6 +1,7 @@
 package coordinator
 
 import (
+	"encoding/json"
 	"log/slog"
 	"math/rand"
 	"time"
@@ -30,7 +31,7 @@ type Coordinator struct {
 	containers      []*container.Container
 	doneChan        chan bool
 	op              *operator.Operator
-	SelfPlayerState chan *interface{}
+	SelfPlayerState chan interface{}
 }
 
 func Initialize(_containers int, _player *player.Player, done chan bool) *Coordinator {
@@ -39,9 +40,9 @@ func Initialize(_containers int, _player *player.Player, done chan bool) *Coordi
 	c.doneChan = done
 	c.players = make(map[uint32]*player.Player)
 	c.players[c.localPlayerUuid] = _player
-	c.SelfPlayerState = make(chan *interface{})
+	c.SelfPlayerState = make(chan interface{})
 
-	c.op := operator.New(c.doneChan)
+	c.op = operator.New(c.doneChan)
 	c.op.InitializePubsub(_player)
 	c.ConstructBoard(_containers)
 	return c
@@ -100,7 +101,7 @@ func (c *Coordinator) initializeCursor(id uint32) {
 }
 func (c *Coordinator) listenToPeers() {
 	select {
-	case <-c.op.Messages:
+	case msg := <-c.op.Messages:
 		switch msg.GetTopic() {
 		case "MESSAGE":
 			bytes := msg.GetData()
@@ -114,7 +115,7 @@ func (c *Coordinator) listenToPeers() {
 				var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
 				player := playerMove.Player
 
-				_coordinator.UpdatePlayer(player.Id.ID(), &player)
+				c.UpdatePlayer(player.Id.ID(), &player)
 				break
 			case messages.AddPlayerType:
 				break
@@ -135,7 +136,7 @@ func (c *Coordinator) DisplaceLocal(x, y int) {
 		Data: messages.PlayerMove{
 			SrcId:  c.localPlayerUuid,
 			DstId:  0,
-			Player: c.GetLocalPlayer(),
+			Player: *c.GetLocalPlayer().Clone(),
 		},
 	}
 }
