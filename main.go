@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"log/slog"
 	"terminal_hack/internal/coordinator"
 	"terminal_hack/internal/player"
@@ -10,9 +12,22 @@ import (
 
 func main() {
 
+	// Create a file handler
+	f, err := os.Create("app.log")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	// Create a text handler that writes to the file
+	handler := slog.NewTextHandler(f, nil)
+
+	// Create a logger with the file handler
+	logger := slog.New(handler)
+
 	doneChan := make(chan bool)
-	slog.Info("Initializing termbox")
-	err := termbox.Init()
+	logger.Info("Initializing termbox")
+	err = termbox.Init()
 	if err != nil {
 		panic(err)
 	}
@@ -20,7 +35,7 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 
 	p := player.CreatePlayer(1)
-	slog.Info("Constructing player")
+	logger.Info("Constructing player")
 	coordinator := coordinator.Initialize(2, p, doneChan)
 	termbox.Flush()
 mainloop:

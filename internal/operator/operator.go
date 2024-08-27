@@ -61,7 +61,7 @@ func (o *Operator) InitializePubsub(player_ *player.Player) {
 	if err != nil {
 		panic(err)
 	}
-
+	o.ps = ps
 	// setup local mDNS discovery
 	if err := setupDiscovery(h); err != nil {
 		panic(err)
@@ -128,5 +128,8 @@ func (o *Operator) SendMessage(topic string, msg interface{}) {
 	}
 	_topic, _ := o.ps.Join(topic)
 	_topic.Publish(o.ctx, raw)
+	slog.Info(
+		fmt.Sprintf("Message{%s} published", topic),
+	)
 
 }
