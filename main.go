@@ -36,7 +36,7 @@ func main() {
 
 	p := player.CreatePlayer(1)
 	logger.Info("Constructing player")
-	coordinator := coordinator.Initialize(2, p, doneChan)
+	coordinator := coordinator.Initialize(logger, 2, p, doneChan)
 	termbox.Flush()
 mainloop:
 	for {

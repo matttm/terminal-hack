@@ -35,6 +35,7 @@ type Operator struct {
 
 	self     peer.ID
 	doneChan chan bool
+	logger   *slog.Logger
 }
 
 func New(done chan bool) *Operator {
@@ -42,7 +43,7 @@ func New(done chan bool) *Operator {
 	o.doneChan = done
 	return o
 }
-func (o *Operator) InitializePubsub(player_ *player.Player) {
+func (o *Operator) InitializePubsub(logger *slog.Logger, _player *player.Player) {
 	// parse some flags to set our nickname and the room to join
 	// nickFlag := flag.String("nick", "", "nickname to use in chat. will be generated if empty")
 	// roomFlag := flag.String("room", "awesome-chat-room", "name of chat room to join")
@@ -90,10 +91,10 @@ type discoveryNotifee struct {
 // the PubSub system will automatically start interacting with them if they also
 // support PubSub.
 func (n *discoveryNotifee) HandlePeerFound(pi peer.AddrInfo) {
-	slog.Info(fmt.Sprintf("discovered new peer %s\n", pi.ID.String()))
+	o.logger.Info(fmt.Sprintf("discovered new peer %s\n", pi.ID.String()))
 	err := n.h.Connect(context.Background(), pi)
 	if err != nil {
-		slog.Error("error connecting to peer %s: %s\n", pi.ID.String(), err)
+		o.logger.Error("error connecting to peer %s: %s\n", pi.ID.String(), err)
 	}
 }
 

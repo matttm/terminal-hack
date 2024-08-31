@@ -32,17 +32,19 @@ type Coordinator struct {
 	doneChan        chan bool
 	op              *operator.Operator
 	SelfPlayerState chan interface{}
+	logger          *slog.Logger
 }
 
-func Initialize(_containers int, _player *player.Player, done chan bool) *Coordinator {
+func Initialize(logger *slog.Logger, _containers int, _player *player.Player, done chan bool) *Coordinator {
 	c := new(Coordinator)
+	c.logger = logger
 	c.localPlayerUuid = _player.Id.ID()
 	c.doneChan = done
 	c.players = make(map[uint32]*player.Player)
 	c.players[c.localPlayerUuid] = _player
 	c.SelfPlayerState = make(chan interface{})
 
-	c.op = operator.New(c.doneChan)
+	c.op = operator.New(c.logger, c.doneChan)
 	c.op.InitializePubsub(_player)
 	c.ConstructBoard(_containers)
 	return c
@@ -79,7 +81,7 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 }
 
 func (c *Coordinator) initializeCursor(id uint32) {
-	slog.Info("Initialiing Cursor")
+	c.logger.Info("Initialiing Cursor")
 	playerId := id
 	c.players[playerId].Cursor = cursor.InitializeCursor(c.containers[0])
 	ticker := time.NewTicker(500 * time.Millisecond)
