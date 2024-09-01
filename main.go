@@ -20,7 +20,7 @@ func main() {
 	defer f.Close()
 
 	// Create a text handler that writes to the file
-	handler := slog.NewTextHandler(f, nil)
+	handler := slog.NewJSONHandler(f, nil)
 
 	// Create a logger with the file handler
 	logger := slog.New(handler)
