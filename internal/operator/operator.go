@@ -42,6 +42,7 @@ func New(logger *slog.Logger, done chan bool) *Operator {
 	o := new(Operator)
 	o.logger = logger
 	o.doneChan = done
+	o.logger.Info("Constructing operator")
 	return o
 }
 func (o *Operator) InitializePubsub(_player *player.Player) {
@@ -68,7 +69,9 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 	if err := setupDiscovery(h); err != nil {
 		panic(err)
 	}
+	o.logger.Info("Setting up mDNS")
 	o.subscribeAndDispatch(o.ctx, ps)
+	o.logger.Info("Dispatched a local listener")
 	// TODO: add check to see if there any peers
 	// send new player
 	if len(o.ps.ListPeers(constants.TOPIC)) > 0 {
@@ -77,7 +80,7 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 			messages.GameMessage{
 				MessageType: messages.AddPlayerType,
 				Data: messages.AddPlayer{
-					Player: *player_.Clone(),
+					Player: *_player.Clone(),
 				},
 			})
 	}
@@ -92,10 +95,10 @@ type discoveryNotifee struct {
 // the PubSub system will automatically start interacting with them if they also
 // support PubSub.
 func (n *discoveryNotifee) HandlePeerFound(pi peer.AddrInfo) {
-	o.logger.Info(fmt.Sprintf("discovered new peer %s\n", pi.ID.String()))
+	slog.Info(fmt.Sprintf("discovered new peer %s\n", pi.ID.String()))
 	err := n.h.Connect(context.Background(), pi)
 	if err != nil {
-		o.logger.Error("error connecting to peer %s: %s\n", pi.ID.String(), err)
+		slog.Error("error connecting to peer %s: %s\n", pi.ID.String(), err)
 	}
 }
 
