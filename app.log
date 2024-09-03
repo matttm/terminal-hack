@@ -1,3 +1,8 @@
-{"time":"2024-09-02T13:31:05.598874-04:00","level":"INFO","msg":"Initializing termbox"}
-{"time":"2024-09-02T13:31:05.60062-04:00","level":"INFO","msg":"Constructing player"}
-{"time":"2024-09-02T13:31:06.236434-04:00","level":"INFO","msg":"Initialiing Cursor"}
+{"time":"2024-09-03T07:29:34.057828-04:00","level":"INFO","msg":"Initializing termbox"}
+{"time":"2024-09-03T07:29:34.059438-04:00","level":"INFO","msg":"Constructing player"}
+{"time":"2024-09-03T07:29:34.059462-04:00","level":"INFO","msg":"Constructing operator"}
+{"time":"2024-09-03T07:29:34.086384-04:00","level":"INFO","msg":"Setting up mDNS"}
+{"time":"2024-09-03T07:29:34.086495-04:00","level":"INFO","msg":"Dispatched a local listener"}
+{"time":"2024-09-03T07:29:34.673259-04:00","level":"INFO","msg":"Initialiing Cursor"}
+{"time":"2024-09-03T07:29:34.673319-04:00","level":"INFO","msg":"Initializing cursor for player x at symbol ⨆"}
+{"time":"2024-09-03T07:29:34.673417-04:00","level":"INFO","msg":"Dispatch Blink thread"}

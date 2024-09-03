@@ -24,6 +24,7 @@ func main() {
 
 	// Create a logger with the file handler
 	logger := slog.New(handler)
+	slog.SetDefault(logger)
 
 	doneChan := make(chan bool)
 	logger.Info("Initializing termbox")
