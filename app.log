@@ -1,8 +1,11 @@
-{"time":"2024-09-03T07:29:34.057828-04:00","level":"INFO","msg":"Initializing termbox"}
-{"time":"2024-09-03T07:29:34.059438-04:00","level":"INFO","msg":"Constructing player"}
-{"time":"2024-09-03T07:29:34.059462-04:00","level":"INFO","msg":"Constructing operator"}
-{"time":"2024-09-03T07:29:34.086384-04:00","level":"INFO","msg":"Setting up mDNS"}
-{"time":"2024-09-03T07:29:34.086495-04:00","level":"INFO","msg":"Dispatched a local listener"}
-{"time":"2024-09-03T07:29:34.673259-04:00","level":"INFO","msg":"Initialiing Cursor"}
-{"time":"2024-09-03T07:29:34.673319-04:00","level":"INFO","msg":"Initializing cursor for player x at symbol ⨆"}
-{"time":"2024-09-03T07:29:34.673417-04:00","level":"INFO","msg":"Dispatch Blink thread"}
+{"time":"2024-09-04T15:03:54.905501-04:00","level":"INFO","msg":"Initializing termbox"}
+{"time":"2024-09-04T15:03:54.907162-04:00","level":"INFO","msg":"Constructing player"}
+{"time":"2024-09-04T15:03:54.907192-04:00","level":"INFO","msg":"Constructing operator"}
+{"time":"2024-09-04T15:03:54.923028-04:00","level":"INFO","msg":"Setting up mDNS"}
+{"time":"2024-09-04T15:03:54.923089-04:00","level":"INFO","msg":"Dispatched a local listener"}
+{"time":"2024-09-04T15:03:55.508627-04:00","level":"INFO","msg":"Initialiing Cursor"}
+{"time":"2024-09-04T15:03:55.508692-04:00","level":"INFO","msg":"Initializing cursor for player x at symbol look"}
+{"time":"2024-09-04T15:03:55.508797-04:00","level":"INFO","msg":"Dispatch Blink thread"}
+{"time":"2024-09-04T15:03:55.508893-04:00","level":"INFO","msg":"Polling keyboard"}
+{"time":"2024-09-04T15:04:03.850926-04:00","level":"INFO","msg":"Displacing..."}
+{"time":"2024-09-04T15:04:03.851513-04:00","level":"INFO","msg":"Sending displacement..."}

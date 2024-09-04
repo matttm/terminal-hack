@@ -41,6 +41,7 @@ func main() {
 	termbox.Flush()
 mainloop:
 	for {
+		logger.Info("Polling keyboard")
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
 			// x, y := cursor.X, cursor.Y
