@@ -135,14 +135,17 @@ func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.logger.Info("Displacing...")
 	c.Displace(c.localPlayerUuid, x, y)
 	c.logger.Info("Sending displacement...")
-	c.SelfPlayerState <- messages.GameMessage{
-		MessageType: "MESSAGE",
-		Data: messages.PlayerMove{
-			SrcId:  c.localPlayerUuid,
-			DstId:  0,
-			Player: *c.GetLocalPlayer().Clone(),
+	c.op.SendMessage(
+		messages.GameBoardType,
+		messages.GameMessage{
+			MessageType: "MESSAGE",
+			Data: messages.PlayerMove{
+				SrcId:  c.localPlayerUuid,
+				DstId:  0,
+				Player: *c.GetLocalPlayer().Clone(),
+			},
 		},
-	}
+	)
 }
 
 func (c *Coordinator) Displace(playerUuid uint32, x, y int) {
