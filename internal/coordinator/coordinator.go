@@ -104,6 +104,7 @@ func (c *Coordinator) initializeCursor(id uint32) {
 func (c *Coordinator) listenToPeers() {
 	select {
 	case msg := <-c.op.Messages:
+		c.logger.Info("Received message from channel")
 		switch msg.GetTopic() {
 		case "MESSAGE":
 			bytes := msg.GetData()

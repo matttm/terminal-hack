@@ -123,15 +123,22 @@ func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, msgs ch
 		if msg.ReceivedFrom == id {
 			continue
 		}
+		slog.Info("Message received from subscription")
 		msgs <- msg
 	}
 }
 func (o *Operator) SendMessage(topic string, msg interface{}) {
 	raw, err := json.Marshal(msg)
+	o.logger.Info(
+		fmt.Sprintf("Sending payload: %b", raw),
+	)
 	if err != nil {
 		panic(err)
 	}
-	_topic, _ := o.ps.Join(topic)
+	_topic, err := o.ps.Join(topic)
+	if err != nil {
+		panic(err)
+	}
 	_topic.Publish(o.ctx, raw)
 	o.logger.Info(
 		fmt.Sprintf("Message{%s} published", topic),
