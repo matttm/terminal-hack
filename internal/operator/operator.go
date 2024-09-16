@@ -118,7 +118,12 @@ func (o *Operator) subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) 
 }
 func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, msgs chan *pubsub.Message) {
 	for {
-		msg, _ := sub.Next(ctx)
+		msg, err := sub.Next(ctx)
+		if err != nil {
+			slog.Error(
+				fmt.Sprintf("Error encountered during receive: %s", err.Error()),
+			)
+		}
 		// only forward messages delivered by others
 		if msg.ReceivedFrom == id {
 			continue
