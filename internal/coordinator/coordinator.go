@@ -47,6 +47,7 @@ func Initialize(logger *slog.Logger, _containers int, _player *player.Player, do
 	c.op = operator.New(c.logger, c.doneChan)
 	c.op.InitializePubsub(_player)
 	c.ConstructBoard(_containers)
+	go c.listenToPeers()
 	return c
 }
 func (c *Coordinator) ConstructBoard(_containers int) {
