@@ -103,34 +103,36 @@ func (c *Coordinator) initializeCursor(id uint32) {
 	termbox.Flush()
 }
 func (c *Coordinator) listenToPeers() {
-	select {
-	case msg := <-c.op.Messages:
-		c.logger.Info("Received message from channel")
-		switch msg.GetTopic() {
-		case "MESSAGE":
-			bytes := msg.GetData()
-			payload := new(messages.GameMessage)
-			err := json.Unmarshal(bytes, payload)
-			if err != nil {
-				panic(err)
-			}
-			switch payload.MessageType {
-			case messages.PlayerMoveType: // player position update
-				var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
-				player := playerMove.Player
+	for {
+		select {
+		case msg := <-c.op.Messages:
+			c.logger.Info("Received message from channel")
+			switch msg.GetTopic() {
+			case "MESSAGE":
+				bytes := msg.GetData()
+				payload := new(messages.GameMessage)
+				err := json.Unmarshal(bytes, payload)
+				if err != nil {
+					panic(err)
+				}
+				switch payload.MessageType {
+				case messages.PlayerMoveType: // player position update
+					var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
+					player := playerMove.Player
 
-				c.UpdatePlayer(player.Id.ID(), &player)
-				break
-			case messages.AddPlayerType:
-				break
-			case messages.GameBoardType:
+					c.UpdatePlayer(player.Id.ID(), &player)
+					break
+				case messages.AddPlayerType:
+					break
+				case messages.GameBoardType:
+					break
+				}
 				break
 			}
+		case <-c.doneChan:
 			break
-		}
-	case <-c.doneChan:
-		break
 
+		}
 	}
 }
 func (c *Coordinator) DisplaceLocal(x, y int) {

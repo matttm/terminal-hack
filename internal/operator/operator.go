@@ -28,10 +28,10 @@ type Operator struct {
 	Messages        chan *pubsub.Message
 	SelfPlayerState chan *interface{} // TODO: can this bw added in a select {} with .Next()?
 
-	ctx   context.Context
-	ps    *pubsub.PubSub
-	topic *pubsub.Topic
-	sub   *pubsub.Subscription
+	ctx    context.Context
+	ps     *pubsub.PubSub
+	topics map[string]*pubsub.Topic
+	sub    *pubsub.Subscription
 
 	self     peer.ID
 	doneChan chan bool
@@ -70,7 +70,8 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 		panic(err)
 	}
 	o.logger.Info("Setting up mDNS")
-	o.subscribeAndDispatch(o.ctx, ps)
+	o.topics =
+		o.subscribeAndDispatch(o.ctx, ps)
 	o.logger.Info("Dispatched a local listener")
 	// TODO: add check to see if there any peers
 	// send new player
@@ -140,13 +141,20 @@ func (o *Operator) SendMessage(topic string, msg interface{}) {
 	if err != nil {
 		panic(err)
 	}
-	_topic, err := o.ps.Join(topic)
-	if err != nil {
-		panic(err)
-	}
+	_topic := o.getTopic(topic)
 	_topic.Publish(o.ctx, raw)
 	o.logger.Info(
 		fmt.Sprintf("Message{%s} published", topic),
 	)
 
+}
+func (o *Operator) getTopic(t string) *pubsub.Topic {
+	if o.topics[t] == nil {
+		_topic, err := o.ps.Join(topic)
+		if err != nil {
+			panic(err)
+		}
+		o.topics[t] = _topic
+	}
+	return o.topics[t]
 }
