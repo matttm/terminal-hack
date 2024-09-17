@@ -111,10 +111,12 @@ func setupDiscovery(h host.Host) error {
 	return s.Start()
 }
 func (o *Operator) subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) {
-	topic := "MESSAGE"
-	_topic, _ := ps.Join(topic)
-	sub, _ := _topic.Subscribe()
-	go readLoop(ctx, o.self, sub, o.Messages)
+	topics := []string{}
+	for _, topic := range topics {
+		_topic, _ := ps.Join(topic)
+		sub, _ := _topic.Subscribe()
+		go readLoop(ctx, o.self, sub, o.Messages)
+	}
 
 }
 func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, msgs chan *pubsub.Message) {
