@@ -108,7 +108,7 @@ func (c *Coordinator) listenToPeers() {
 		case msg := <-c.op.Messages:
 			c.logger.Info("Received message from channel")
 			switch msg.GetTopic() {
-			case "MESSAGE":
+			case messages.GameMessageTopic:
 				bytes := msg.GetData()
 				payload := new(messages.GameMessage)
 				err := json.Unmarshal(bytes, payload)

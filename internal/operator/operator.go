@@ -113,8 +113,11 @@ func setupDiscovery(h host.Host) error {
 func (o *Operator) subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) {
 	topics := []string{messages.GameMessageTopic}
 	for _, topic := range topics {
-		_topic, _ := ps.Join(topic)
-		sub, _ := _topic.Subscribe()
+		_topic := o.getTopic(topic)
+		sub, err := _topic.Subscribe()
+		if err != nil {
+			o.logger.Error(err.Error())
+		}
 		go readLoop(ctx, o.self, sub, o.Messages)
 	}
 
