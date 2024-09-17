@@ -70,8 +70,8 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 		panic(err)
 	}
 	o.logger.Info("Setting up mDNS")
-	o.topics =
-		o.subscribeAndDispatch(o.ctx, ps)
+	o.topics = make(map[string]*pubsub.Topic)
+	o.subscribeAndDispatch(o.ctx, ps)
 	o.logger.Info("Dispatched a local listener")
 	// TODO: add check to see if there any peers
 	// send new player
