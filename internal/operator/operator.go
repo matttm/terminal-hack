@@ -77,7 +77,7 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 	// send new player
 	if len(o.ps.ListPeers(constants.TOPIC)) > 0 {
 		o.SendMessage(
-			messages.AddPlayerType,
+			messages.GameMessageTopic,
 			messages.GameMessage{
 				MessageType: messages.AddPlayerType,
 				Data: messages.AddPlayer{
@@ -111,7 +111,7 @@ func setupDiscovery(h host.Host) error {
 	return s.Start()
 }
 func (o *Operator) subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) {
-	topics := []string{}
+	topics := []string{messages.GameMessageTopic}
 	for _, topic := range topics {
 		_topic, _ := ps.Join(topic)
 		sub, _ := _topic.Subscribe()

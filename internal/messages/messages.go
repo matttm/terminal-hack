@@ -24,7 +24,8 @@ type GameMessage struct {
 }
 
 const (
-	AddPlayerType  = "ADD_PLAYER"
-	PlayerMoveType = "PLAYEER_MOVE"
-	GameBoardType  = "GAMEBOARD_STATE"
+	GameMessageTopic = "GAME_MESSAGE"
+	AddPlayerType    = "ADD_PLAYER"
+	PlayerMoveType   = "PLAYEER_MOVE"
+	GameBoardType    = "GAMEBOARD_STATE"
 )

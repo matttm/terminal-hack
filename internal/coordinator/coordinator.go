@@ -140,9 +140,9 @@ func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.Displace(c.localPlayerUuid, x, y)
 	c.logger.Info("Sending displacement...")
 	c.op.SendMessage(
-		messages.GameBoardType,
+		messages.GameMessageTopic,
 		messages.GameMessage{
-			MessageType: "MESSAGE",
+			MessageType: messages.GameBoardType,
 			Data: messages.PlayerMove{
 				SrcId:  c.localPlayerUuid,
 				DstId:  0,
