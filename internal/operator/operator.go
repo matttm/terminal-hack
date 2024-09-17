@@ -150,7 +150,7 @@ func (o *Operator) SendMessage(topic string, msg interface{}) {
 }
 func (o *Operator) getTopic(t string) *pubsub.Topic {
 	if o.topics[t] == nil {
-		_topic, err := o.ps.Join(topic)
+		_topic, err := o.ps.Join(t)
 		if err != nil {
 			panic(err)
 		}
