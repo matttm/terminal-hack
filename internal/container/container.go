@@ -1,7 +1,7 @@
 package container
 
 import (
-	"fmt"
+	"errors"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
@@ -41,9 +41,6 @@ func (c *Container) InsertWords(words []string) {
 			return
 		}
 		x, y = c.InsertWord(x, y, w)
-		if x == -1 {
-			fmt.Print(x, " ", y, "(", c.rows, " ", c.columns, " ", c.size, ")")
-		}
 	}
 }
 
@@ -88,7 +85,7 @@ func removeOffset(x, y int) (int, int) {
 }
 func (c *Container) GetSymbolAt(x, y int) (*symbol.Symbol, error) {
 	if x > c.columns || y > c.rows {
-		return nil, nil
+		return nil, errors.New("Out of bounds")
 	}
 	return c.symbols[y][x], nil
 }
