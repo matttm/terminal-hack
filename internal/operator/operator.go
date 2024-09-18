@@ -71,7 +71,8 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 	}
 	o.logger.Info("Setting up mDNS")
 	o.topics = make(map[string]*pubsub.Topic)
-	o.subscribeAndDispatch(o.ctx, ps)
+	o.Messages = make(chan *pubsub.Message)
+	o.subscribeAndDispatch(o.ctx)
 	o.logger.Info("Dispatched a local listener")
 	// TODO: add check to see if there any peers
 	// send new player
@@ -110,7 +111,7 @@ func setupDiscovery(h host.Host) error {
 	s := mdns.NewMdnsService(h, DiscoveryServiceTag, &discoveryNotifee{h: h})
 	return s.Start()
 }
-func (o *Operator) subscribeAndDispatch(ctx context.Context, ps *pubsub.PubSub) {
+func (o *Operator) subscribeAndDispatch(ctx context.Context) {
 	topics := []string{messages.GameMessageTopic}
 	for _, topic := range topics {
 		_topic := o.getTopic(topic)

@@ -47,7 +47,7 @@ func Initialize(logger *slog.Logger, _containers int, _player *player.Player, do
 	c.op = operator.New(c.logger, c.doneChan)
 	c.op.InitializePubsub(_player)
 	c.ConstructBoard(_containers)
-	go c.listenToPeers()
+	go c.listenToMessageChannnel()
 	return c
 }
 func (c *Coordinator) ConstructBoard(_containers int) {
@@ -102,7 +102,8 @@ func (c *Coordinator) initializeCursor(id uint32) {
 	// defer ticker.Stop()
 	termbox.Flush()
 }
-func (c *Coordinator) listenToPeers() {
+func (c *Coordinator) listenToMessageChannnel() {
+	slog.Info("Listening to message channel")
 	for {
 		select {
 		case msg := <-c.op.Messages:
