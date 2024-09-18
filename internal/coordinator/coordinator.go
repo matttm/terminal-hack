@@ -2,6 +2,7 @@ package coordinator
 
 import (
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"math/rand"
 	"time"
@@ -116,6 +117,9 @@ func (c *Coordinator) listenToMessageChannnel() {
 				if err != nil {
 					panic(err)
 				}
+				slog.Info(
+					fmt.Sprintf("Processing GameMessage: %s", payload),
+				)
 				switch payload.MessageType {
 				case messages.PlayerMoveType: // player position update
 					var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
