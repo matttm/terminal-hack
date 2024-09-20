@@ -59,6 +59,7 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 		panic(err)
 	}
 
+	o.self = h.ID()
 	// create a new PubSub service using the GossipSub router
 	ps, err := pubsub.NewGossipSub(o.ctx, h)
 	if err != nil {
@@ -131,8 +132,11 @@ func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, msgs ch
 				fmt.Sprintf("Error encountered during receive: %s", err.Error()),
 			)
 		}
+		slog.Info(msg.ReceivedFrom.String())
+		slog.Info(id.String())
 		// only forward messages delivered by others
-		if msg.ReceivedFrom == id {
+		if msg.ReceivedFrom.String() == id.String() {
+			slog.Info("Ignoring message from self")
 			continue
 		}
 		slog.Info("Message received from subscription")
