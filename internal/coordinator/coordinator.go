@@ -131,13 +131,18 @@ func (c *Coordinator) listenToMessageChannnel() {
 				switch payload.MessageType {
 				case messages.PlayerMoveType: // player position update
 					var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
+					_player := c.players[playerMove.SrcId]
+					_player.Cursor.X = playerMove.X
+					_player.Cursor.Y = playerMove.Y
+					c.UpdatePlayer(_player.Id.ID(), _player)
 					break
 				case messages.AddPlayerType:
 					break
 				case messages.GameBoardRequestType:
 					break
 				case messages.GameBoardResponseType:
-					c.InitializationWords <- []string{"somethong"}
+					var data messages.GameBoardResponse = payload.Data.(messages.GameBoardResponse)
+					c.InitializationWords <- data.Words
 					break
 				}
 				break

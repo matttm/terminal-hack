@@ -2,7 +2,6 @@ package messages
 
 import (
 	"terminal_hack/internal/player"
-	"terminal_hack/internal/symbol"
 )
 
 type AddPlayer struct {
@@ -12,7 +11,8 @@ type AddPlayer struct {
 }
 type GameBoardResponse struct {
 	// Starting with one container for now
-	Symbols [][]symbol.Symbol
+	Containers int
+	Words      []string
 }
 type GameBoardRequest struct {
 	// NOTE: only hosts will send a response
