@@ -20,8 +20,6 @@ import (
 	"terminal_hack/internal/utilities"
 )
 
-// TODO:
-
 type Coordinator struct {
 	localPlayerUuid uint32
 	width           int
@@ -123,13 +121,12 @@ func (c *Coordinator) listenToMessageChannnel() {
 				switch payload.MessageType {
 				case messages.PlayerMoveType: // player position update
 					var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
-					player := playerMove.Player
-
-					c.UpdatePlayer(player.Id.ID(), &player)
 					break
 				case messages.AddPlayerType:
 					break
-				case messages.GameBoardType:
+				case messages.GameBoardRequestType:
+					break
+				case messages.GameBoardResponseType:
 					break
 				}
 				break
@@ -144,14 +141,16 @@ func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.logger.Info("Displacing...")
 	c.Displace(c.localPlayerUuid, x, y)
 	c.logger.Info("Sending displacement...")
+	player := c.GetLocalPlayer()
 	c.op.SendMessage(
 		messages.GameMessageTopic,
 		messages.GameMessage{
-			MessageType: messages.GameBoardType,
+			MessageType: messages.PlayerMoveType,
 			Data: messages.PlayerMove{
-				SrcId:  c.localPlayerUuid,
-				DstId:  0,
-				Player: *c.GetLocalPlayer().Clone(),
+				SrcId: c.localPlayerUuid,
+				DstId: 0,
+				X:     player.Cursor.X,
+				Y:     player.Cursor.Y,
 			},
 		},
 	)
