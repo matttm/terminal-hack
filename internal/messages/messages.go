@@ -15,6 +15,7 @@ type GameBoardResponse struct {
 	Symbols [][]symbol.Symbol
 }
 type GameBoardRequest struct {
+	// NOTE: only hosts will send a response
 	SrcId int
 	DstId int
 }

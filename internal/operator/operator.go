@@ -78,7 +78,14 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 	// TODO: add check to see if there any peers
 	// send new player
 	if len(o.ps.ListPeers(constants.TOPIC)) > 0 {
-		// TODO: ask for state here
+		// TODO: ask for state here, including reordering container render incase of other peers
+		o.SendMessage(
+			messages.GameMessageTopic,
+			messages.GameMessage{
+				MessageType: messages.GameBoardRequestType,
+				Data:        messages.GameBoardRequest{},
+			},
+		)
 		o.SendMessage(
 			messages.GameMessageTopic,
 			messages.GameMessage{
