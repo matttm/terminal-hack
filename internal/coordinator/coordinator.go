@@ -21,17 +21,18 @@ import (
 )
 
 type Coordinator struct {
-	localPlayerUuid uint32
-	width           int
-	height          int
-	players         map[uint32]*player.Player
-	containersCount int
-	carnie          *carnie.Carnie
-	containers      []*container.Container
-	doneChan        chan bool
-	op              *operator.Operator
-	SelfPlayerState chan interface{}
-	logger          *slog.Logger
+	localPlayerUuid     uint32
+	width               int
+	height              int
+	players             map[uint32]*player.Player
+	containersCount     int
+	carnie              *carnie.Carnie
+	containers          []*container.Container
+	doneChan            chan bool
+	op                  *operator.Operator
+	InitializationWords chan []string
+	SelfPlayerState     chan interface{}
+	logger              *slog.Logger
 }
 
 func Initialize(logger *slog.Logger, _containers int, _player *player.Player, done chan bool) *Coordinator {
@@ -42,14 +43,29 @@ func Initialize(logger *slog.Logger, _containers int, _player *player.Player, do
 	c.players = make(map[uint32]*player.Player)
 	c.players[c.localPlayerUuid] = _player
 	c.SelfPlayerState = make(chan interface{})
+	// NOTE: force containers to be 1 rn as i get words state in messaging working
+	if _containers != 1 {
+		panic("Container count must be 1 in current state of development")
+	}
 
 	c.op = operator.New(c.logger, c.doneChan)
 	c.op.InitializePubsub(_player)
-	c.ConstructBoard(_containers)
+	var words []string
+	if c.op.GetPeerCount() == 0 {
+		words, _ = utilities.GetWordList(125)
+		words = append(words, utilities.GenerateRandomStrings(109)...)
+
+		rand.Shuffle(len(words), func(i, j int) {
+			words[i], words[j] = words[j], words[i]
+		})
+	} else {
+		words = <-c.InitializationWords
+	}
+	c.ConstructBoard(_containers, words)
 	go c.listenToMessageChannnel()
 	return c
 }
-func (c *Coordinator) ConstructBoard(_containers int) {
+func (c *Coordinator) ConstructBoard(_containers int, words []string) {
 	c.containersCount = _containers
 	c.containers = make([]*container.Container, _containers)
 	w, h := termbox.Size()
@@ -60,12 +76,6 @@ func (c *Coordinator) ConstructBoard(_containers int) {
 	for i := 0; i < c.containersCount-1; i++ {
 		_container := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
 		_container.RenderContainer()
-		words, _ := utilities.GetWordList(125)
-		words = append(words, utilities.GenerateRandomStrings(109)...)
-
-		rand.Shuffle(len(words), func(i, j int) {
-			words[i], words[j] = words[j], words[i]
-		})
 		_container.InsertWords(words)
 		_container.RenderSymbols()
 
@@ -127,6 +137,7 @@ func (c *Coordinator) listenToMessageChannnel() {
 				case messages.GameBoardRequestType:
 					break
 				case messages.GameBoardResponseType:
+					c.InitializationWords <- []string{"somethong"}
 					break
 				}
 				break

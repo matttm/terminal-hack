@@ -176,3 +176,7 @@ func (o *Operator) getTopic(t string) *pubsub.Topic {
 	}
 	return o.topics[t]
 }
+
+func (o *Operator) GetPeerCount() int {
+	return len(o.ps.ListPeers(messages.GameMessageTopic))
+}
