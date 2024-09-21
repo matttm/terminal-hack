@@ -78,6 +78,7 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 	// TODO: add check to see if there any peers
 	// send new player
 	if len(o.ps.ListPeers(constants.TOPIC)) > 0 {
+		// TODO: ask for state here
 		o.SendMessage(
 			messages.GameMessageTopic,
 			messages.GameMessage{
@@ -143,7 +144,7 @@ func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, msgs ch
 		msgs <- msg
 	}
 }
-func (o *Operator) SendMessage(topic string, msg interface{}) {
+func (o *Operator) SendMessage(topic string, msg messages.GameMessage) {
 	raw, err := json.Marshal(msg)
 	o.logger.Info(
 		fmt.Sprintf("Sending payload: %b", raw),
@@ -154,7 +155,7 @@ func (o *Operator) SendMessage(topic string, msg interface{}) {
 	_topic := o.getTopic(topic)
 	_topic.Publish(o.ctx, raw)
 	o.logger.Info(
-		fmt.Sprintf("Message{%s} published", topic),
+		fmt.Sprintf("Message{%s:%s} published", topic, msg.MessageType),
 	)
 
 }

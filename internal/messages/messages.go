@@ -10,13 +10,20 @@ type AddPlayer struct {
 	DstId  uint32
 	Player player.Player
 }
-type GameBoard struct {
+type GameBoardResponse struct {
+	// Starting with one container for now
 	Symbols [][]symbol.Symbol
 }
+type GameBoardRequest struct {
+	SrcId int
+	DstId int
+}
+
 type PlayerMove struct {
-	SrcId  uint32
-	DstId  uint32
-	Player player.Player
+	SrcId uint32
+	DstId uint32
+	X     int
+	Y     int
 }
 type GameMessage struct {
 	MessageType string
@@ -24,8 +31,9 @@ type GameMessage struct {
 }
 
 const (
-	GameMessageTopic = "GAME_MESSAGE"
-	AddPlayerType    = "ADD_PLAYER"
-	PlayerMoveType   = "PLAYEER_MOVE"
-	GameBoardType    = "GAMEBOARD_STATE"
+	GameMessageTopic      = "GAME_MESSAGE"
+	AddPlayerType         = "ADD_PLAYER"
+	PlayerMoveType        = "PLAYEER_MOVE"
+	GameBoardRequestType  = "GAMEBOARD_STATE_REQUEST"
+	GameBoardResponseType = "GAMEBOARD_STATE_RSPONSE"
 )
