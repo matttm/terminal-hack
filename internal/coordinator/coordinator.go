@@ -30,6 +30,7 @@ type Coordinator struct {
 	containers          []*container.Container
 	doneChan            chan bool
 	op                  *operator.Operator
+	words               []string
 	InitializationWords chan []string
 	SelfPlayerState     chan interface{}
 	logger              *slog.Logger
@@ -44,8 +45,8 @@ func Initialize(logger *slog.Logger, _containers int, _player *player.Player, do
 	c.players[c.localPlayerUuid] = _player
 	c.SelfPlayerState = make(chan interface{})
 	// NOTE: force containers to be 1 rn as i get words state in messaging working
-	if _containers != 1 {
-		panic("Container count must be 1 in current state of development")
+	if _containers != 2 {
+		panic("Container count must be 2 in current state of development")
 	}
 
 	c.op = operator.New(c.logger, c.doneChan)
@@ -61,6 +62,7 @@ func Initialize(logger *slog.Logger, _containers int, _player *player.Player, do
 	} else {
 		words = <-c.InitializationWords
 	}
+	c.words = words
 	c.ConstructBoard(_containers, words)
 	go c.listenToMessageChannnel()
 	return c
@@ -131,7 +133,7 @@ func (c *Coordinator) listenToMessageChannnel() {
 				switch payload.MessageType {
 				case messages.PlayerMoveType: // player position update
 					var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
-					_player := c.players[playerMove.SrcId]
+					_player := c.players[payload.SrcId]
 					_player.Cursor.X = playerMove.X
 					_player.Cursor.Y = playerMove.Y
 					c.UpdatePlayer(_player.Id.ID(), _player)
@@ -139,6 +141,14 @@ func (c *Coordinator) listenToMessageChannnel() {
 				case messages.AddPlayerType:
 					break
 				case messages.GameBoardRequestType:
+					//  var data messages.GameBoardRequest = payload.Data.(messages.GameBoardRequest)
+					c.op.SendMessage(
+						payload.SrcId,
+						messages.GameBoardResponseType,
+						messages.GameBoardResponse{
+							Words: c.words,
+						},
+					)
 					break
 				case messages.GameBoardResponseType:
 					var data messages.GameBoardResponse = payload.Data.(messages.GameBoardResponse)
@@ -159,15 +169,11 @@ func (c *Coordinator) DisplaceLocal(x, y int) {
 	c.logger.Info("Sending displacement...")
 	player := c.GetLocalPlayer()
 	c.op.SendMessage(
-		messages.GameMessageTopic,
-		messages.GameMessage{
-			MessageType: messages.PlayerMoveType,
-			Data: messages.PlayerMove{
-				SrcId: c.localPlayerUuid,
-				DstId: 0,
-				X:     player.Cursor.X,
-				Y:     player.Cursor.Y,
-			},
+		0, //  TODO: make an enum where 0 is everyone
+		messages.PlayerMoveType,
+		messages.PlayerMove{
+			X: player.Cursor.X,
+			Y: player.Cursor.Y,
 		},
 	)
 }

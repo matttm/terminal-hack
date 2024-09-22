@@ -80,20 +80,17 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 	if len(o.ps.ListPeers(constants.TOPIC)) > 0 {
 		// TODO: ask for state here, including reordering container render incase of other peers
 		o.SendMessage(
-			messages.GameMessageTopic,
-			messages.GameMessage{
-				MessageType: messages.GameBoardRequestType,
-				Data:        messages.GameBoardRequest{},
-			},
+			1,
+			messages.GameBoardRequestType,
+			messages.GameBoardRequest{},
 		)
 		o.SendMessage(
-			messages.GameMessageTopic,
-			messages.GameMessage{
-				MessageType: messages.AddPlayerType,
-				Data: messages.AddPlayer{
-					Player: *_player.Clone(),
-				},
-			})
+			1,
+			messages.AddPlayerType,
+			messages.AddPlayer{
+				Player: *_player.Clone(),
+			},
+		)
 	}
 }
 
@@ -151,7 +148,13 @@ func readLoop(ctx context.Context, id peer.ID, sub *pubsub.Subscription, msgs ch
 		msgs <- msg
 	}
 }
-func (o *Operator) SendMessage(topic string, msg messages.GameMessage) {
+func (o *Operator) SendMessage(dstId uint32, msgType string, data interface{}) {
+	msg := messages.GameMessage{
+		MessageType: msgType,
+		SrcId:       0,
+		DstId:       dstId,
+		Data:        data,
+	}
 	raw, err := json.Marshal(msg)
 	o.logger.Info(
 		fmt.Sprintf("Sending payload: %b", raw),
@@ -159,10 +162,10 @@ func (o *Operator) SendMessage(topic string, msg messages.GameMessage) {
 	if err != nil {
 		panic(err)
 	}
-	_topic := o.getTopic(topic)
+	_topic := o.getTopic(messages.GameMessageTopic)
 	_topic.Publish(o.ctx, raw)
 	o.logger.Info(
-		fmt.Sprintf("Message{%s:%s} published", topic, msg.MessageType),
+		fmt.Sprintf("Message{%s:%s} published", msgType, msg.MessageType),
 	)
 
 }
