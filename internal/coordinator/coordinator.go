@@ -127,12 +127,14 @@ func (c *Coordinator) listenToMessageChannnel() {
 				if err != nil {
 					panic(err)
 				}
+				data := payload.Data.(map[string]interface{})
 				slog.Info(
-					fmt.Sprintf("Processing GameMessage: %s", payload),
+					fmt.Sprintf("Processing GameMessage: %s", payload.Data),
 				)
 				switch payload.MessageType {
 				case messages.PlayerMoveType: // player position update
-					var playerMove messages.PlayerMove = payload.Data.(messages.PlayerMove)
+					var playerMove *messages.PlayerMove = new(messages.PlayerMove)
+					utilities.StructureData(playerMove, data)
 					_player := c.players[payload.SrcId]
 					_player.Cursor.X = playerMove.X
 					_player.Cursor.Y = playerMove.Y

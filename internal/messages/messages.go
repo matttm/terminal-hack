@@ -11,6 +11,7 @@ type GameBoardResponse struct {
 	// Starting with one container for now
 	Containers int
 	Words      []string
+	Players    []player.Player
 }
 type GameBoardRequest struct {
 	// NOTE: only hosts will send a response

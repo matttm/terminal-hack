@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"math/rand"
 	"net/http"
 	"time"
@@ -63,4 +64,16 @@ func GenerateRandomStrings(count int) []string {
 		s[i] = GenerateUnicodeString()
 	}
 	return s
+}
+func StructureData[T any](structured *T, data map[string]interface{}) {
+	raw, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+	if err = json.Unmarshal(raw, structured); err != nil {
+		panic(err)
+	}
+	slog.Info(
+		fmt.Sprintf("Data structured as %#v", structured),
+	)
 }

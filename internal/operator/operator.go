@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
-	"terminal_hack/internal/constants"
 	"terminal_hack/internal/messages"
 	"terminal_hack/internal/player"
 	"time"
@@ -77,7 +76,12 @@ func (o *Operator) InitializePubsub(_player *player.Player) {
 	o.logger.Info("Dispatched a local listener")
 	// TODO: add check to see if there any peers
 	// send new player
-	if len(o.ps.ListPeers(constants.TOPIC)) > 0 {
+	// NOTE: testing how long it takes for peeer init
+	time.Sleep(2 * time.Second)
+	slog.Info(
+		fmt.Sprintf("Peer count during init %d", o.GetPeerCount())
+	)
+	if len(o.GetPeerCount()) > 0 {
 		// TODO: ask for state here, including reordering container render incase of other peers
 		o.SendMessage(
 			1,

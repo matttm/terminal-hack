@@ -1,16 +1,17 @@
-{"time":"2024-09-22T13:27:39.700851-04:00","level":"INFO","msg":"Initializing termbox"}
-{"time":"2024-09-22T13:27:39.702984-04:00","level":"INFO","msg":"Constructing player"}
-{"time":"2024-09-22T13:27:39.703035-04:00","level":"INFO","msg":"Constructing operator"}
-{"time":"2024-09-22T13:27:39.735571-04:00","level":"INFO","msg":"Setting up mDNS"}
-{"time":"2024-09-22T13:27:39.736289-04:00","level":"INFO","msg":"Dispatched a local listener"}
-{"time":"2024-09-22T13:27:40.308007-04:00","level":"INFO","msg":"Initialiing Cursor"}
-{"time":"2024-09-22T13:27:40.308166-04:00","level":"INFO","msg":"Initializing cursor for player x at symbol ⮾"}
-{"time":"2024-09-22T13:27:40.308319-04:00","level":"INFO","msg":"Dispatch Blink thread"}
-{"time":"2024-09-22T13:27:40.308357-04:00","level":"INFO","msg":"Listening to message channel"}
-{"time":"2024-09-22T13:27:40.308418-04:00","level":"INFO","msg":"Polling keyboard"}
-{"time":"2024-09-22T13:27:45.74807-04:00","level":"INFO","msg":"discovered new peer 12D3KooWPLnP2euaqXnBN5emARuc9B5toGEjbRZ3peGkC5NKcuaZ\n"}
-{"time":"2024-09-22T13:27:52.352705-04:00","level":"INFO","msg":"12D3KooWPLnP2euaqXnBN5emARuc9B5toGEjbRZ3peGkC5NKcuaZ"}
-{"time":"2024-09-22T13:27:52.352749-04:00","level":"INFO","msg":"12D3KooWB2Ug2y1T8AeKib36DcU7jFJvgbHm9vuEEF6AeriEKuLw"}
-{"time":"2024-09-22T13:27:52.352769-04:00","level":"INFO","msg":"Message received from subscription"}
-{"time":"2024-09-22T13:27:52.352787-04:00","level":"INFO","msg":"Received message from channel"}
-{"time":"2024-09-22T13:27:52.353268-04:00","level":"INFO","msg":"Processing GameMessage: &{PLAYER_MOVE %!s(uint32=0) %!s(uint32=0) map[X:%!s(float64=0) Y:%!s(float64=1)]}"}
+{"time":"2024-09-23T06:24:21.216605-04:00","level":"INFO","msg":"Initializing termbox"}
+{"time":"2024-09-23T06:24:21.218223-04:00","level":"INFO","msg":"Constructing player"}
+{"time":"2024-09-23T06:24:21.218276-04:00","level":"INFO","msg":"Constructing operator"}
+{"time":"2024-09-23T06:24:21.250465-04:00","level":"INFO","msg":"Setting up mDNS"}
+{"time":"2024-09-23T06:24:21.251023-04:00","level":"INFO","msg":"Dispatched a local listener"}
+{"time":"2024-09-23T06:24:21.851761-04:00","level":"INFO","msg":"Initialiing Cursor"}
+{"time":"2024-09-23T06:24:21.851869-04:00","level":"INFO","msg":"Initializing cursor for player x at symbol knop"}
+{"time":"2024-09-23T06:24:21.851964-04:00","level":"INFO","msg":"Dispatch Blink thread"}
+{"time":"2024-09-23T06:24:21.85199-04:00","level":"INFO","msg":"Listening to message channel"}
+{"time":"2024-09-23T06:24:21.852007-04:00","level":"INFO","msg":"Polling keyboard"}
+{"time":"2024-09-23T06:24:28.352426-04:00","level":"INFO","msg":"discovered new peer 12D3KooWBLkarTNZtw7XyEWDdy5GABj2J7nV3poc69mPxPfXVrJF\n"}
+{"time":"2024-09-23T06:24:49.073382-04:00","level":"INFO","msg":"12D3KooWBLkarTNZtw7XyEWDdy5GABj2J7nV3poc69mPxPfXVrJF"}
+{"time":"2024-09-23T06:24:49.073432-04:00","level":"INFO","msg":"12D3KooWCitWiKPkYtuTJCeQxa24AhcXzsunmYu9BW3eEAA2R3in"}
+{"time":"2024-09-23T06:24:49.073453-04:00","level":"INFO","msg":"Message received from subscription"}
+{"time":"2024-09-23T06:24:49.073472-04:00","level":"INFO","msg":"Received message from channel"}
+{"time":"2024-09-23T06:24:49.073882-04:00","level":"INFO","msg":"Processing GameMessage: map[X:%!s(float64=0) Y:%!s(float64=1)]"}
+{"time":"2024-09-23T06:24:49.074048-04:00","level":"INFO","msg":"Data structured as &messages.PlayerMove{X:0, Y:1}"}
