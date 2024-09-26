@@ -2,7 +2,7 @@
 
 Development: Intermittent
 
-**(Note: development is being impacted by a bug in Apple's M2 Mac mDNSResponder
+** Note: development is being impacted by a bug in Apple's M2 Mac mDNSResponder
 
 ## Description
 
