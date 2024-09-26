@@ -2,7 +2,7 @@
 
 Development: Intermittent
 
-** Note: development for a multiplayer version of this game, is being impacted by a bug in Apple's M2 Mac mDNSResponder
+** Note: development for a multiplayer version of this game, is being impacted by an issue with OS' mDNS.
 
 ## Description
 
