@@ -1,51 +1,68 @@
 package main
 
 import (
-	"os"
+	"terminal_hack/internal/carnie"
+	"terminal_hack/internal/constants"
+	"terminal_hack/internal/container"
+	"terminal_hack/internal/cursor"
+	"terminal_hack/internal/utilities"
 
-	"log/slog"
-	"terminal_hack/internal/coordinator"
-	"terminal_hack/internal/player"
+	"math/rand"
+	"time"
 
 	"github.com/nsf/termbox-go"
 )
 
 func main() {
-
-	// Create a file handler
-	f, err := os.Create("app.log")
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	// Create a text handler that writes to the file
-	handler := slog.NewJSONHandler(f, nil)
-
-	// Create a logger with the file handler
-	logger := slog.New(handler)
-	slog.SetDefault(logger)
-
-	doneChan := make(chan bool)
-	logger.Info("Initializing termbox")
-	err = termbox.Init()
+	err := termbox.Init()
 	if err != nil {
 		panic(err)
 	}
 	defer termbox.Close()
 	termbox.SetInputMode(termbox.InputEsc)
 
-	p := player.CreatePlayer(1)
-	logger.Info("Constructing player")
-	coordinator := coordinator.Initialize(logger, 2, p, doneChan)
+	w, h := termbox.Size()
+	words, _ := utilities.GetWordList(125)
+	words = append(words, utilities.GenerateRandomStrings(500)...)
+
+	rand.Shuffle(len(words), func(i, j int) {
+		words[i], words[j] = words[j], words[i]
+	})
+
+	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
+	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
+	c.InsertWords(words)
+	carnie := carnie.NewCarnie(c.GetSymbols())
+
+	c.RenderContainer()
+	out.RenderContainer()
+	c.RenderSymbols()
+
+	sym, err := c.GetSymbolAt(0, 0)
+	if err != nil {
+		panic(err)
+	}
+	cursor := cursor.InitializeCursor(c, 0, 0, sym)
+	ticker := time.NewTicker(500 * time.Millisecond)
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				// fmt.Println("Blink")
+				cursor.Blink()
+			}
+		}
+	}()
+	defer ticker.Stop()
+
 	termbox.Flush()
+
 mainloop:
 	for {
-		logger.Info("Polling keyboard")
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
 			// x, y := cursor.X, cursor.Y
-			// coordinator.ResetSymbol()
+			cursor.ResetSymbol()
 			switch ev.Key {
 			case termbox.KeyEsc:
 				break mainloop
@@ -53,23 +70,23 @@ mainloop:
 				// cursor.Blink()
 				break
 			case termbox.KeyArrowUp:
-				coordinator.DisplaceLocal(0, -1)
+				cursor.Displace(0, -1)
 				break
 			case termbox.KeyArrowDown:
-				coordinator.DisplaceLocal(0, 1)
+				cursor.Displace(0, 1)
 				break
 			case termbox.KeyArrowLeft:
-				coordinator.DisplaceLocal(-1, 0)
+				cursor.Displace(-1, 0)
 				break
 			case termbox.KeyArrowRight:
-				coordinator.DisplaceLocal(1, 0)
+				cursor.Displace(1, 0)
 				break
 			case termbox.KeyEnter:
-				coordinator.EvaluatePlayer()
+				_, winStr := carnie.IsWinner(cursor.GetSelectedSymbol())
+				out.WriteLine(winStr)
 				break
 			}
 		}
 
 	}
-	doneChan <- true
 }

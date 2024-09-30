@@ -1,8 +1,6 @@
 package cursor
 
 import (
-	"fmt"
-	"log/slog"
 	"sync"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
@@ -21,17 +19,12 @@ type Cursor struct {
 	container   *container.Container
 }
 
-func InitializeCursor(container *container.Container) *Cursor {
+func InitializeCursor(container *container.Container, x, y int, symbol *symbol.Symbol) *Cursor {
 	c := new(Cursor)
 	c.container = container
-	c.X = 0
-	c.Y = 0
-	sym, err := container.GetSymbolAt(c.X, c.Y)
-	slog.Info(fmt.Sprintf("Initializing cursor for player x at symbol %s", sym.Str))
-	if err != nil {
-		panic(err)
-	}
-	c.Selection = sym
+	c.X = x
+	c.Y = y
+	c.Selection = symbol
 	c.blinkStatus = false
 	return c
 }
@@ -65,10 +58,7 @@ func (c *Cursor) _displace(x, y int) {
 	}
 	c.X += x
 	c.Y += y
-	tmp, err := c.container.GetSymbolAt(c.X, c.Y)
-	if err != nil {
-		panic(err)
-	}
+	tmp, _ := c.container.GetSymbolAt(c.X, c.Y)
 	if tmp == nil {
 		return
 	}
@@ -78,13 +68,6 @@ func (c *Cursor) _displace(x, y int) {
 	c.Selection = tmp
 }
 func (c *Cursor) GetSelectedSymbol() *symbol.Symbol {
-	sym, err := c.container.GetSymbolAt(c.X, c.Y)
-	if err != nil {
-		panic(err)
-	}
+	sym, _ := c.container.GetSymbolAt(c.X, c.Y)
 	return sym
-}
-func (c *Cursor) clone() *Cursor {
-	_c := new(Cursor)
-	return _c
 }
