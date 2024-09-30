@@ -2,7 +2,7 @@
 
 Development: Inactive
 
-*** The multiplayer version iss in development on `origin/mulriplayer` but is being hindered by my environment's inability to uae mDNS.
+*** The multiplayer version is in development on `origin/mulriplayer` but is being hindered by my environment's inability to uae mDNS.
 
 ## Description
 
