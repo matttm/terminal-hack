@@ -8,8 +8,8 @@ import (
 	"net/http"
 )
 
-func GetWordList(count int) ([]string, error) {
-	res, err := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=4", count))
+func GetWordList(count, length int) ([]string, error) {
+	res, err := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=%d", count, length))
 	if err != nil {
 		panic(err)
 	}

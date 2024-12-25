@@ -21,8 +21,13 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 
 	w, h := termbox.Size()
-	words, _ := utilities.GetWordList(125)
-	words = append(words, utilities.GenerateRandomStrings(500)...)
+	x1, y1, dy, dx := constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/6
+
+	words, _ := utilities.GetWordList(25, 4)
+	totalChCount := dx * dy
+	currentChCount := 25 * 4
+	neededChCnt := totalChCount - currentChCount
+	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
 
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
@@ -30,7 +35,6 @@ func main() {
 
 	// TODO: put container and offset into a "hex-panel"
 
-	x1, y1, dy, dx := constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/6
 	c := container.NewContainer(x1, y1, dy, dx)
 	offsetColumns := container.NewContainer(x1+dx+1, y1, dy, 12)
 	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
