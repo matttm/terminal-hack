@@ -4,8 +4,8 @@ import (
 	// "fmt"
 	"terminal_hack/internal/symbol"
 
+	"github.com/gdamore/tcell/termbox"
 	"github.com/google/uuid"
-	"github.com/nsf/termbox-go"
 )
 
 const fg = termbox.ColorGreen
@@ -15,9 +15,6 @@ const offset_x = 5
 const offset_y = 5
 
 func RenderRectangle(x1, y1, vpWidth, vpHeight int) {
-	// cols := 3
-	// colWidth := vpWidth / col
-	// var vertChar rune = '|'
 
 	const coldef = termbox.ColorDefault
 	guiWidth := vpWidth

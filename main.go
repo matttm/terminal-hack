@@ -7,10 +7,9 @@ import (
 	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/utilities"
 
+	"github.com/gdamore/tcell/termbox"
 	"math/rand"
 	"time"
-
-	"github.com/nsf/termbox-go"
 )
 
 func main() {
@@ -29,15 +28,20 @@ func main() {
 		words[i], words[j] = words[j], words[i]
 	})
 
-	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
+	// TODO: put container and offset into a "hex-panel"
+
+	x1, y1, dy, dx := constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/6
+	c := container.NewContainer(x1, y1, dx, dy)
+	offsetColumns := container.NewContainer(x1+dx, y1, 8, dx)
 	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
 	c.InsertWords(words)
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
 	c.RenderContainer()
+	offsetColumns.RenderContainer()
 	out.RenderContainer()
 	c.RenderSymbols()
-
+	//
 	sym, err := c.GetSymbolAt(0, 0)
 	if err != nil {
 		panic(err)
@@ -58,6 +62,7 @@ func main() {
 	termbox.Flush()
 
 mainloop:
+
 	for {
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:

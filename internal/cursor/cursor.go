@@ -7,7 +7,7 @@ import (
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
 
-	"github.com/nsf/termbox-go"
+	"github.com/gdamore/tcell/termbox"
 )
 
 type Cursor struct {
