@@ -25,10 +25,10 @@ func RenderRectangle(x1, y1, vpWidth, vpHeight int) {
 	termbox.SetCell(x1, y2, '└', coldef, coldef)
 	termbox.SetCell(x2+1, y1, '┐', coldef, coldef)
 	termbox.SetCell(x2+1, y2, '┘', coldef, coldef)
-	fill(x1+1, y1, guiWidth, 1, termbox.Cell{Ch: '─'})
-	fill(x1+1, y2, guiWidth, 1, termbox.Cell{Ch: '─'})
-	fill(x1, y1+1, 1, guiHeight-1, termbox.Cell{Ch: '│'})
-	fill(x2+1, y1+1, 1, guiHeight-1, termbox.Cell{Ch: '│'})
+	fill(x1+1, y1, guiWidth, 1, termbox.Cell{Ch: '━'})
+	fill(x1+1, y2, guiWidth, 1, termbox.Cell{Ch: '━'})
+	fill(x1, y1+1, 1, guiHeight-1, termbox.Cell{Ch: '┃'})
+	fill(x2+1, y1+1, 1, guiHeight-1, termbox.Cell{Ch: '┃'})
 
 	termbox.Flush()
 }
