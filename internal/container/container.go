@@ -78,9 +78,6 @@ func reset() {}
 func (c *Container) RenderSymbols() {
 	renderer.RenderSymbolsInContainer(c.x1, c.y1, c.columns, c.rows, c.symbols)
 }
-func (c *Container) RenderHexOffsets() {
-	// TODO: can prolly reuse render symbols if string size is exact width of column
-}
 func (c *Container) RenderContainer() error {
 	renderer.RenderRectangle(c.x1, c.y1, c.columns, c.rows)
 	return nil

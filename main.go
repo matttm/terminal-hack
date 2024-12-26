@@ -23,11 +23,14 @@ func main() {
 	w, h := termbox.Size()
 	x1, y1, dy, dx := constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/6
 
-	words, _ := utilities.GetWordList(25, 4)
+	symbolCount := 25
+	symbolLength := 4
+	words, _ := utilities.GetWordList(symbolCount, symbolLength)
 	totalChCount := dx * dy
-	currentChCount := 25 * 4
+	currentChCount := symbolCount * symbolLength
 	neededChCnt := totalChCount - currentChCount
 	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
+	hexOffsets := []string{"0x0004  "}
 
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
@@ -38,13 +41,17 @@ func main() {
 	c := container.NewContainer(x1, y1, dy, dx)
 	offsetColumns := container.NewContainer(x1+dx+5, y1, dy, 8)
 	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
+
 	c.InsertWords(words)
+	offsetColumns.InsertWords(hexOffsets)
+
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
 	c.RenderContainer()
 	offsetColumns.RenderContainer()
 	out.RenderContainer()
 	c.RenderSymbols()
+	offsetColumns.RenderSymbols()
 	//
 	sym, err := c.GetSymbolAt(0, 0)
 	if err != nil {
