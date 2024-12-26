@@ -30,7 +30,7 @@ func main() {
 	currentChCount := symbolCount * symbolLength
 	neededChCnt := totalChCount - currentChCount
 	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
-	hexOffsets := []string{"0x0004  "}
+	hexOffsets := []string{"0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  "}
 
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
