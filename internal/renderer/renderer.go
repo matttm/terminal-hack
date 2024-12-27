@@ -76,7 +76,7 @@ func WriteLine(_x, _y int, w, h int, s string, fg, bg termbox.Attribute) {
 	for _, r := range runes {
 		termbox.SetCell(x, y, r, fg, bg)
 		x++
-		if x == _x+w {
+		if x == _x+w-1 {
 			x = _x
 			y += 1
 		}
