@@ -4,8 +4,8 @@ import (
 	// "fmt"
 	"terminal_hack/internal/symbol"
 
+	"github.com/gdamore/tcell/termbox"
 	"github.com/google/uuid"
-	"github.com/nsf/termbox-go"
 )
 
 const fg = termbox.ColorGreen
@@ -15,9 +15,6 @@ const offset_x = 5
 const offset_y = 5
 
 func RenderRectangle(x1, y1, vpWidth, vpHeight int) {
-	// cols := 3
-	// colWidth := vpWidth / col
-	// var vertChar rune = '|'
 
 	const coldef = termbox.ColorDefault
 	guiWidth := vpWidth
@@ -25,13 +22,13 @@ func RenderRectangle(x1, y1, vpWidth, vpHeight int) {
 	x2 := x1 + guiWidth
 	y2 := y1 + guiHeight
 	termbox.SetCell(x1, y1, '┌', coldef, coldef)
-	termbox.SetCell(x1, y2, '└', coldef, coldef)
+	termbox.SetCell(x1, y2+1, '└', coldef, coldef)
 	termbox.SetCell(x2+1, y1, '┐', coldef, coldef)
-	termbox.SetCell(x2+1, y2, '┘', coldef, coldef)
-	fill(x1+1, y1, guiWidth, 1, termbox.Cell{Ch: '─'})
-	fill(x1+1, y2, guiWidth, 1, termbox.Cell{Ch: '─'})
-	fill(x1, y1+1, 1, guiHeight-1, termbox.Cell{Ch: '│'})
-	fill(x2+1, y1+1, 1, guiHeight-1, termbox.Cell{Ch: '│'})
+	termbox.SetCell(x2+1, y2+1, '┘', coldef, coldef)
+	fill(x1+1, y1, guiWidth+1, 1, termbox.Cell{Ch: '━'})
+	fill(x1, y2+1, guiWidth+1, 1, termbox.Cell{Ch: '━'})
+	fill(x1, y1+1, 1, guiHeight, termbox.Cell{Ch: '┃'})
+	fill(x2+1, y1+1, 1, guiHeight, termbox.Cell{Ch: '┃'})
 
 	termbox.Flush()
 }

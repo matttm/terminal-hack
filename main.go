@@ -7,10 +7,9 @@ import (
 	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/utilities"
 
+	"github.com/gdamore/tcell/termbox"
 	"math/rand"
 	"time"
-
-	"github.com/nsf/termbox-go"
 )
 
 func main() {
@@ -22,22 +21,38 @@ func main() {
 	termbox.SetInputMode(termbox.InputEsc)
 
 	w, h := termbox.Size()
-	words, _ := utilities.GetWordList(125)
-	words = append(words, utilities.GenerateRandomStrings(500)...)
+	x1, y1, dy, dx := constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/6
+
+	symbolCount := 25
+	symbolLength := 4
+	words, _ := utilities.GetWordList(symbolCount, symbolLength)
+	totalChCount := dx * dy
+	currentChCount := symbolCount * symbolLength
+	neededChCnt := totalChCount - currentChCount
+	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
+	hexOffsets := []string{"0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  "}
 
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
 	})
 
-	c := container.NewContainer(constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/3)
+	// TODO: put container and offset into a "hex-panel"
+
+	c := container.NewContainer(x1, y1, dy, dx)
+	offsetColumns := container.NewContainer(x1+dx+5, y1, dy, 8)
 	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
+
 	c.InsertWords(words)
+	offsetColumns.InsertWords(hexOffsets)
+
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
 	c.RenderContainer()
+	offsetColumns.RenderContainer()
 	out.RenderContainer()
 	c.RenderSymbols()
-
+	offsetColumns.RenderSymbols()
+	//
 	sym, err := c.GetSymbolAt(0, 0)
 	if err != nil {
 		panic(err)
@@ -58,6 +73,7 @@ func main() {
 	termbox.Flush()
 
 mainloop:
+
 	for {
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:

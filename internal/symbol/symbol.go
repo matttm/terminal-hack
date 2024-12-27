@@ -3,8 +3,8 @@ package symbol
 import (
 	"terminal_hack/internal/constants"
 
+	"github.com/gdamore/tcell/termbox"
 	"github.com/google/uuid"
-	"github.com/nsf/termbox-go"
 )
 
 type Symbol struct {
