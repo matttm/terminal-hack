@@ -21,20 +21,20 @@ func RenderRectangle(x1, y1, vpWidth, vpHeight int) {
 	guiHeight := vpHeight
 	x2 := x1 + guiWidth
 	y2 := y1 + guiHeight
+	fill(x1+1, y1, guiWidth, 1, termbox.Cell{Ch: '━'})
+	fill(x1+1, y2+1, guiWidth, 1, termbox.Cell{Ch: '━'})
+	fill(x1, y1+1, 1, guiHeight, termbox.Cell{Ch: '┃'})
+	fill(x2+1, y1+1, 1, guiHeight, termbox.Cell{Ch: '┃'})
 	termbox.SetCell(x1, y1, '┌', coldef, coldef)
 	termbox.SetCell(x1, y2+1, '└', coldef, coldef)
 	termbox.SetCell(x2+1, y1, '┐', coldef, coldef)
 	termbox.SetCell(x2+1, y2+1, '┘', coldef, coldef)
-	fill(x1+1, y1, guiWidth-1, 1, termbox.Cell{Ch: '━'})
-	fill(x1+1, y2, guiWidth-1, 1, termbox.Cell{Ch: '━'})
-	fill(x1, y1+1, 1, guiHeight-1, termbox.Cell{Ch: '┃'})
-	fill(x2, y1+1, 1, guiHeight-1, termbox.Cell{Ch: '┃'})
 	termbox.Flush()
 }
 
 func fill(x, y, w, h int, cell termbox.Cell) {
-	for ly := 0; ly <= h; ly++ {
-		for lx := 0; lx <= w; lx++ {
+	for ly := 0; ly < h; ly++ {
+		for lx := 0; lx < w; lx++ {
 			termbox.SetCell(x+lx, y+ly, cell.Ch, cell.Fg, cell.Bg)
 		}
 	}
