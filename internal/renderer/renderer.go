@@ -41,6 +41,11 @@ func fill(x, y, w, h int, cell termbox.Cell) {
 }
 func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
 func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
+
+// Function RenderSymbolsInContainer
+// desc given a container with a symbols slice, render them to screen, bounded
+//
+//	by container bounds
 func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols [][]*symbol.Symbol) {
 	seen := make(map[uuid.UUID]bool)
 	for _, symRow := range symbols {
@@ -58,6 +63,9 @@ func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols [][]*symbol
 		}
 	}
 }
+
+// Function ColorRune
+// desc change colors of given symbol
 func ColorRune(s *symbol.Symbol, fg, bg termbox.Attribute) {
 	for _, r := range s.Runes {
 		termbox.SetCell(r.X, r.Y, r.Ch, fg, bg)
@@ -69,7 +77,12 @@ func ColorRune(s *symbol.Symbol, fg, bg termbox.Attribute) {
 
 }
 
-func WriteLine(_x, _y int, w, h int, s string, fg, bg termbox.Attribute) {
+// Function WriteLine
+// desc writes a line of text at given y value w provided fg/bg
+// returns top-left corner of text's bounding box
+//
+//	useful for determining position for next message
+func WriteLine(_x, _y int, w, h int, s string, fg, bg termbox.Attribute) (int, int) {
 	runes := []rune(s)
 	x, y := _x, _y
 	for _, r := range runes {
@@ -80,4 +93,5 @@ func WriteLine(_x, _y int, w, h int, s string, fg, bg termbox.Attribute) {
 			y += 1
 		}
 	}
+	return _x, y
 }
