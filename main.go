@@ -47,9 +47,9 @@ func main() {
 
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
-	// 	c.RenderContainer()
-	// 	offsetColumns.RenderContainer()
-	// 	out.RenderContainer()
+	c.RenderContainer()
+	offsetColumns.RenderContainer()
+	out.RenderContainer()
 	c.RenderSymbols()
 	offsetColumns.RenderSymbols()
 	//
