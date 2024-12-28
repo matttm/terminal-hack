@@ -39,7 +39,7 @@ func main() {
 	// TODO: put container and offset into a "hex-panel"
 
 	c := container.NewContainer(x1, y1, dy, dx)
-	offsetColumns := container.NewContainer(x1+dx+5, y1, dy, 8)
+	offsetColumns := container.NewContainer(x1+dx+2, y1, dy, 8)
 	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, dy, dx)
 
 	c.InsertWords(words)
@@ -47,9 +47,9 @@ func main() {
 
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
-	c.RenderContainer()
-	offsetColumns.RenderContainer()
-	out.RenderContainer()
+	// 	c.RenderContainer()
+	// 	offsetColumns.RenderContainer()
+	// 	out.RenderContainer()
 	c.RenderSymbols()
 	offsetColumns.RenderSymbols()
 	//
