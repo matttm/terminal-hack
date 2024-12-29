@@ -16,7 +16,9 @@ func CreateMessageContainer(x1, y1, dy, dx int) *MessageContainer {
 	return mc
 
 }
-func (mc *MessageContainer) clearBoard() {}
+func (mc *MessageContainer) clearBoard() {
+	mc.gui.clearBoard()
+}
 
 func (mc *MessageContainer) RenderContainer() {
 	mc.gui.RenderContainer()

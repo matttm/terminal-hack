@@ -40,7 +40,7 @@ func main() {
 
 	c := container.NewContainer(x1, y1, dy, dx)
 	offsetColumns := container.NewContainer(x1+dx+2, y1, dy, 8)
-	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, dy, dx)
+	out := container.CreateMessageContainer(2*constants.OFFSET+w/3, constants.OFFSET, dy, dx)
 
 	c.InsertWords(words)
 	offsetColumns.InsertWords(hexOffsets)
@@ -49,7 +49,6 @@ func main() {
 
 	c.RenderContainer()
 	offsetColumns.RenderContainer()
-	out.RenderContainer()
 	c.RenderSymbols()
 	offsetColumns.RenderSymbols()
 	//
@@ -99,7 +98,7 @@ mainloop:
 				break
 			case termbox.KeyEnter:
 				_, winStr := carnie.IsWinner(cursor.GetSelectedSymbol())
-				out.WriteLine(winStr)
+				out.AddNewMessage(winStr)
 				break
 			}
 		}

@@ -106,5 +106,9 @@ func (c *Container) WriteLine(s string) {
 // desc writes text at given point, bounded by a container
 // returns top-left point of text's bounding-box
 func (c *Container) WriteLineAtPosition(pos int, s string) (int, int) {
-	return renderer.WriteLine(c.x1+constants.TEXT_PADDING, c.y1+constants.TEXT_PADDING+pos, c.columns, c.rows, s, constants.DUD_FG, constants.DUD_BG)
+	// TODO: change y1 to y2
+	return renderer.WriteLine(c.x1+constants.TEXT_PADDING, c.y1+c.rows+constants.TEXT_PADDING-pos, c.columns, c.rows, s, constants.DUD_FG, constants.DUD_BG)
+}
+func (c *Container) clearBoard() {
+	renderer.ClearRectangle(c.x1+constants.TEXT_PADDING, c.y1+constants.TEXT_PADDING, c.columns, c.rows)
 }

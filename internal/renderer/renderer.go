@@ -39,6 +39,9 @@ func fill(x, y, w, h int, cell termbox.Cell) {
 		}
 	}
 }
+func ClearRectangle(x, y, w, h int) {
+	fill(x, y, w, h, termbox.Cell{Ch: 'x', Fg: termbox.ColorBlack, Bg: termbox.ColorBlack})
+}
 func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
 func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
 
