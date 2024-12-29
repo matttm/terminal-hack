@@ -30,7 +30,7 @@ func main() {
 	currentChCount := symbolCount * symbolLength
 	neededChCnt := totalChCount - currentChCount
 	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
-	hexOffsets := []string{"0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  ", "0x0004  "}
+	hexOffsets := utilities.GenerateHexOffsets(dy, 2)
 
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
@@ -39,8 +39,8 @@ func main() {
 	// TODO: put container and offset into a "hex-panel"
 
 	c := container.NewContainer(x1, y1, dy, dx)
-	offsetColumns := container.NewContainer(x1+dx+5, y1, dy, 8)
-	out := container.NewContainer(2*constants.OFFSET+w/3, constants.OFFSET, h-2*constants.OFFSET, w/3)
+	offsetColumns := container.NewContainer(x1+dx+2, y1, dy, 8)
+	out := container.CreateMessageContainer(2*constants.OFFSET+w/3, constants.OFFSET, dy, dx)
 
 	c.InsertWords(words)
 	offsetColumns.InsertWords(hexOffsets)
@@ -49,7 +49,6 @@ func main() {
 
 	c.RenderContainer()
 	offsetColumns.RenderContainer()
-	out.RenderContainer()
 	c.RenderSymbols()
 	offsetColumns.RenderSymbols()
 	//
@@ -99,7 +98,7 @@ mainloop:
 				break
 			case termbox.KeyEnter:
 				_, winStr := carnie.IsWinner(cursor.GetSelectedSymbol())
-				out.WriteLine(winStr)
+				out.AddNewMessage(winStr)
 				break
 			}
 		}

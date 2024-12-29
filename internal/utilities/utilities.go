@@ -6,6 +6,7 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
+	"strings"
 )
 
 func GetWordList(count, length int) ([]string, error) {
@@ -46,4 +47,17 @@ func GenerateRandomStrings(count int) []string {
 		s[i] = GenerateUnicodeString()
 	}
 	return s
+}
+func GenerateHexOffsets(count, lpadding int) []string {
+	ans := []string{}
+	var padSb strings.Builder
+	for i := 0; i < lpadding; i++ {
+		padSb.WriteRune(' ')
+	}
+	padding := padSb.String()
+	for i := 0; i < count; i++ {
+		hex := fmt.Sprintf("0x%04x%s", i*8, padding)
+		ans = append(ans, hex)
+	}
+	return ans
 }
