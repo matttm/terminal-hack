@@ -96,5 +96,5 @@ func WriteLine(_x, _y int, w, h int, s string, fg, bg termbox.Attribute) (int, i
 			y += 1
 		}
 	}
-	return _x, y
+	return _x, _y
 }

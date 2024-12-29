@@ -1,5 +1,7 @@
 package container
 
+import "math"
+
 type message struct {
 	text string
 }
@@ -27,9 +29,15 @@ func (mc *MessageContainer) RenderContainer() {
 func (mc *MessageContainer) AddNewMessage(s string) {
 	mc.messages = append(mc.messages, message{text: s})
 	mc.clearBoard()
+	lines := mc.getLineCountOfMessage(s)
 	pos := 0
 	for i := len(mc.messages) - 1; i >= 0; i-- {
 		m := mc.messages[i]
-		_, pos = mc.gui.WriteLineAtPosition(pos, m.text)
+		_, pos = mc.gui.WriteLineAtPosition(pos, lines, m.text)
 	}
+}
+func (mc *MessageContainer) getLineCountOfMessage(s string) int {
+	// len() is fine here as all characters should be ascii range
+	lines := float64(len(s)) / float64(mc.gui.columns)
+	return int(math.Ceil(lines))
 }
