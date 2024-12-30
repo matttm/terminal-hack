@@ -5,6 +5,8 @@ import (
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
+
+	"github.com/gdamore/tcell"
 	// "terminal_hack/internal/utilities"
 )
 
@@ -17,14 +19,16 @@ type Container struct {
 	columns int
 	size    int // the amount of characters in this container (cannot exceed R*C)
 	symbols [][]*symbol.Symbol
+	s       tcell.Screen
 }
 
-func NewContainer(x1, y1, rows, columns int) *Container {
+func NewContainer(s tcell.Screen, x1, y1, rows, columns int) *Container {
 	c := new(Container)
 	c.x1 = x1
 	c.y1 = y1
 	c.rows = rows
 	c.columns = columns
+	c.s = s
 	c.symbols = make([][]*symbol.Symbol, rows)
 
 	for i := 0; i < rows; i++ {
@@ -76,10 +80,10 @@ func (c *Container) RemainingCapacity() int {
 }
 func reset() {}
 func (c *Container) RenderSymbols() {
-	renderer.RenderSymbolsInContainer(c.x1, c.y1, c.columns, c.rows, c.symbols)
+	renderer.RenderSymbolsInContainer(c.s, c.x1, c.y1, c.columns, c.rows, c.symbols)
 }
 func (c *Container) RenderContainer() error {
-	renderer.RenderRectangle(c.x1, c.y1, c.columns, c.rows)
+	renderer.RenderRectangle(c.s, c.x1, c.y1, c.columns, c.rows)
 	return nil
 }
 
@@ -104,9 +108,9 @@ func (c *Container) GetSymbols() [][]*symbol.Symbol {
 // returns top-left point of text's bounding-box
 func (c *Container) WriteLineAtPosition(pos, lines int, s string) (int, int) {
 	y2 := c.y1 + c.rows - constants.TEXT_PADDING
-	x, y := renderer.WriteLine(c.x1+constants.TEXT_PADDING, y2-pos-lines, c.columns, c.rows, s, constants.DUD_FG, constants.DUD_BG)
+	x, y := renderer.WriteLine(c.s, c.x1+constants.TEXT_PADDING, y2-pos-lines, c.columns, c.rows, s, constants.DUD_FG, constants.DUD_BG)
 	return x, y2 - y
 }
 func (c *Container) clearBoard() {
-	renderer.ClearRectangle(c.x1+constants.TEXT_PADDING, c.y1+constants.TEXT_PADDING, c.columns, c.rows)
+	renderer.ClearRectangle(c.s, c.x1+constants.TEXT_PADDING, c.y1+constants.TEXT_PADDING, c.columns, c.rows)
 }

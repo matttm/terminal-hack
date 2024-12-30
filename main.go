@@ -1,31 +1,42 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"terminal_hack/internal/carnie"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/utilities"
 
-	"github.com/gdamore/tcell/termbox"
 	"math/rand"
 	"time"
+
+	"github.com/gdamore/tcell"
 )
 
 func main() {
-	err := termbox.Init()
-	if err != nil {
-		panic(err)
+	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
+	s, e := tcell.NewScreen()
+	if e != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", e)
+		os.Exit(1)
 	}
-	defer termbox.Close()
-	termbox.SetInputMode(termbox.InputEsc)
+	if e = s.Init(); e != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", e)
+		os.Exit(1)
+	}
 
-	w, h := termbox.Size()
+	s.SetStyle(tcell.StyleDefault)
+	s.Clear()
+
+	// quit := make(chan struct{})
+	w, h := s.Size()
 	x1, y1, dy, dx := constants.OFFSET, constants.OFFSET, h-2*constants.OFFSET, w/6
-
 	symbolCount := 25
 	symbolLength := 4
 	words, _ := utilities.GetWordList(symbolCount, symbolLength)
+
 	totalChCount := dx * dy
 	currentChCount := symbolCount * symbolLength
 	neededChCnt := totalChCount - currentChCount
@@ -38,25 +49,25 @@ func main() {
 
 	// TODO: put container and offset into a "hex-panel"
 
-	c := container.NewContainer(x1, y1, dy, dx)
-	offsetColumns := container.NewContainer(x1+dx+2, y1, dy, 8)
-	out := container.CreateMessageContainer(2*constants.OFFSET+w/3, constants.OFFSET, dy, dx)
+	c := container.NewContainer(s, x1, y1, dy, dx)
+	hexc := container.NewContainer(s, x1+dx+2, y1, dy, 8)
+	out := container.CreateMessageContainer(s, 2*constants.OFFSET+w/3, constants.OFFSET, dy, dx)
 
 	c.InsertWords(words)
-	offsetColumns.InsertWords(hexOffsets)
+	hexc.InsertWords(hexOffsets)
 
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
 	// c.RenderContainer()
 	// offsetColumns.RenderContainer()
 	c.RenderSymbols()
-	offsetColumns.RenderSymbols()
+	hexc.RenderSymbols()
 	//
 	sym, err := c.GetSymbolAt(0, 0)
 	if err != nil {
 		panic(err)
 	}
-	cursor := cursor.InitializeCursor(c, 0, 0, sym)
+	cursor := cursor.InitializeCursor(s, c, 0, 0, sym)
 	ticker := time.NewTicker(500 * time.Millisecond)
 	go func() {
 		for {
@@ -64,39 +75,37 @@ func main() {
 			case <-ticker.C:
 				// fmt.Println("Blink")
 				cursor.Blink()
+				s.Show()
 			}
 		}
 	}()
 	defer ticker.Stop()
 
-	termbox.Flush()
-
 mainloop:
 
 	for {
-		switch ev := termbox.PollEvent(); ev.Type {
-		case termbox.EventKey:
-			// x, y := cursor.X, cursor.Y
+		ev := s.PollEvent()
+		switch ev := ev.(type) {
+		case *tcell.EventKey:
 			cursor.ResetSymbol()
-			switch ev.Key {
-			case termbox.KeyEsc:
+			switch ev.Key() {
+			case tcell.KeyEscape:
 				break mainloop
-			case termbox.KeySpace:
-				// cursor.Blink()
+			case tcell.KeyBS:
 				break
-			case termbox.KeyArrowUp:
+			case tcell.KeyUp:
 				cursor.Displace(0, -1)
 				break
-			case termbox.KeyArrowDown:
+			case tcell.KeyDown:
 				cursor.Displace(0, 1)
 				break
-			case termbox.KeyArrowLeft:
+			case tcell.KeyLeft:
 				cursor.Displace(-1, 0)
 				break
-			case termbox.KeyArrowRight:
+			case tcell.KeyRight:
 				cursor.Displace(1, 0)
 				break
-			case termbox.KeyEnter:
+			case tcell.KeyEnter:
 				_, winStr := carnie.IsWinner(cursor.GetSelectedSymbol())
 				out.AddNewMessage(winStr)
 				break
@@ -104,4 +113,5 @@ mainloop:
 		}
 
 	}
+	s.Fini()
 }

@@ -1,6 +1,10 @@
 package container
 
-import "math"
+import (
+	"math"
+
+	"github.com/gdamore/tcell"
+)
 
 type message struct {
 	text string
@@ -11,9 +15,9 @@ type MessageContainer struct {
 	messages []message
 }
 
-func CreateMessageContainer(x1, y1, dy, dx int) *MessageContainer {
+func CreateMessageContainer(s tcell.Screen, x1, y1, dy, dx int) *MessageContainer {
 	mc := new(MessageContainer)
-	mc.gui = NewContainer(x1, y1, dy, dx)
+	mc.gui = NewContainer(s, x1, y1, dy, dx)
 	mc.messages = make([]message, 3)
 	return mc
 

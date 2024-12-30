@@ -1,15 +1,20 @@
 package constants
 
-import "github.com/gdamore/tcell/termbox"
+import (
+	"github.com/gdamore/tcell"
+)
 
-const WORD_FG = termbox.ColorGreen
-const WORD_BG = termbox.ColorBlack
+const WORD_FG = tcell.Color40
 
-const SELECTED_FG = termbox.ColorGreen
-const SELECTED_BG = termbox.ColorBlack
+var WORD_BG tcell.Color = tcell.NewRGBColor(0, 36, 4)
 
-const DUD_FG = termbox.ColorDefault
-const DUD_BG = termbox.ColorBlack
+const SELECTED_FG = tcell.ColorGreen
+
+var SELECTED_BG = WORD_BG
+
+const DUD_FG = tcell.Color34
+
+var DUD_BG = WORD_BG
 
 const OFFSET = 3
 const INSET = 1
