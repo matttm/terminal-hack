@@ -4,8 +4,7 @@ import (
 	"github.com/gdamore/tcell"
 )
 
-const WORD_FG = tcell.Color40
-
+var WORD_FG tcell.Color = tcell.NewRGBColor(137, 254, 135)
 var WORD_BG tcell.Color = tcell.NewRGBColor(0, 36, 4)
 
 const SELECTED_FG = tcell.ColorGreen
