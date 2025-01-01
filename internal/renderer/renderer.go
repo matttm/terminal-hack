@@ -17,10 +17,7 @@ func RenderRectangle(s tcell.Screen, x1, y1, vpWidth, vpHeight int) {
 	guiHeight := vpHeight
 	x2 := x1 + guiWidth
 	y2 := y1 + guiHeight
-	var st tcell.Style
-	st = st.
-		Foreground(constants.WORD_FG).
-		Background(constants.SELECTED_BG)
+	var st tcell.Style = constants.GetSelectedStyle()
 	fill(s, x1+1, y1, guiWidth, 1, st, '━')
 	fill(s, x1+1, y2+1, guiWidth, 1, st, '━')
 	fill(s, x1, y1+1, 1, guiHeight, st, '┃')
@@ -39,10 +36,7 @@ func fill(s tcell.Screen, x, y, w, h int, st tcell.Style, r rune) {
 	}
 }
 func ClearRectangle(s tcell.Screen, x, y, w, h int) {
-	var st tcell.Style
-	st = st.
-		Foreground(constants.WORD_FG).
-		Background(constants.SELECTED_BG)
+	var st tcell.Style = constants.GetEmptyStyle()
 	fill(s, x, y, w, h, st, 'x')
 }
 

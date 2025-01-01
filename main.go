@@ -27,7 +27,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	s.SetStyle(tcell.StyleDefault)
+	s.SetStyle(constants.GetEmptyStyle())
 	s.Clear()
 
 	// quit := make(chan struct{})
@@ -51,7 +51,7 @@ func main() {
 
 	c := container.NewContainer(s, x1, y1, dy, dx)
 	hexc := container.NewContainer(s, x1+dx+2, y1, dy, 8)
-	out := container.CreateMessageContainer(s, 2*constants.OFFSET+w/3, constants.OFFSET, dy, dx)
+	out := container.CreateMessageContainer(s, x1+dx+2+8+4, y1, dy, dx)
 
 	c.InsertWords(words)
 	hexc.InsertWords(hexOffsets)
