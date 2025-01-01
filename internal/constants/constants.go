@@ -7,7 +7,7 @@ import (
 var WORD_FG tcell.Color = tcell.NewRGBColor(137, 254, 135)
 var WORD_BG tcell.Color = tcell.NewRGBColor(0, 36, 2)
 
-var EMPTY_FG tcell.Color = tcell.NewRGBColor(0, 0, 0)
+var EMPTY_FG tcell.Color = tcell.NewRGBColor(0, 36, 2)
 var EMPTY_BG tcell.Color = tcell.NewRGBColor(0, 36, 2)
 
 const SELECTED_FG = tcell.ColorGreen

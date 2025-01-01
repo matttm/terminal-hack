@@ -111,6 +111,6 @@ func (c *Container) WriteLineAtPosition(pos, lines int, s string) (int, int) {
 	x, y := renderer.WriteLine(c.s, c.x1+constants.TEXT_PADDING, y2-pos-lines, c.columns, c.rows, s, constants.DUD_FG, constants.DUD_BG)
 	return x, y2 - y
 }
-func (c *Container) clearBoard() {
+func (c *Container) ClearContainer() {
 	renderer.ClearRectangle(c.s, c.x1+constants.TEXT_PADDING, c.y1+constants.TEXT_PADDING, c.columns, c.rows)
 }

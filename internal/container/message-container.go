@@ -22,8 +22,8 @@ func CreateMessageContainer(s tcell.Screen, x1, y1, dy, dx int) *MessageContaine
 	return mc
 
 }
-func (mc *MessageContainer) clearBoard() {
-	mc.gui.clearBoard()
+func (mc *MessageContainer) ClearContainer() {
+	mc.gui.ClearContainer()
 }
 
 func (mc *MessageContainer) RenderContainer() {
@@ -32,7 +32,7 @@ func (mc *MessageContainer) RenderContainer() {
 
 func (mc *MessageContainer) AddNewMessage(s string) {
 	mc.messages = append(mc.messages, message{text: s})
-	mc.clearBoard()
+	mc.ClearContainer()
 	lines := mc.getLineCountOfMessage(s)
 	pos := 0
 	for i := len(mc.messages) - 1; i >= 0; i-- {
