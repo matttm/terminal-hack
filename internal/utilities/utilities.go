@@ -24,6 +24,9 @@ func GetWordList(count, length int) ([]string, error) {
 	s := string(data)
 	words := strings.Split(s, "\n")
 	words = filter(words, func(s string) bool { return len(s) == length })
+	rand.Shuffle(len(words), func(i, j int) {
+		words[i], words[j] = words[j], words[i]
+	})
 
 	// res, err := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=%d", count, length))
 	// if err != nil {
