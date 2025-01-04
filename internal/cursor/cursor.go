@@ -7,7 +7,7 @@ import (
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
 
-	"github.com/gdamore/tcell/termbox"
+	"github.com/gdamore/tcell"
 )
 
 type Cursor struct {
@@ -17,27 +17,29 @@ type Cursor struct {
 	blinkStatus bool
 	mu          sync.Mutex
 	container   *container.Container
+	s           tcell.Screen
 }
 
-func InitializeCursor(container *container.Container, x, y int, symbol *symbol.Symbol) *Cursor {
+func InitializeCursor(s tcell.Screen, container *container.Container, x, y int, symbol *symbol.Symbol) *Cursor {
 	c := new(Cursor)
 	c.container = container
 	c.X = x
 	c.Y = y
 	c.Selection = symbol
 	c.blinkStatus = false
+	c.s = s
 	return c
 }
 func (c *Cursor) Blink() {
 	c1, c2 := c.getBlinkStateColors()
 	c.mu.Lock()
-	renderer.ColorRune(c.Selection, c1, c2)
+	renderer.ColorRune(c.s, c.Selection, c1, c2)
 	c.mu.Unlock()
 }
 func (c *Cursor) ResetSymbol() {
-	renderer.ColorRune(c.Selection, c.Selection.FG(), c.Selection.BG())
+	renderer.ColorRune(c.s, c.Selection, c.Selection.FG(), c.Selection.BG())
 }
-func (c *Cursor) getBlinkStateColors() (termbox.Attribute, termbox.Attribute) {
+func (c *Cursor) getBlinkStateColors() (tcell.Color, tcell.Color) {
 	c.blinkStatus = !c.blinkStatus
 	c1 := constants.SELECTED_FG
 	c2 := constants.SELECTED_BG
