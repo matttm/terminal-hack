@@ -18,13 +18,13 @@ func RenderRectangle(s tcell.Screen, x1, y1, vpWidth, vpHeight int) {
 	x2 := x1 + guiWidth
 	y2 := y1 + guiHeight
 	var st tcell.Style = constants.GetSelectedStyle()
-	fill(s, x1+1, y1, guiWidth, 1, st, '━')
-	fill(s, x1+1, y2+1, guiWidth, 1, st, '━')
-	fill(s, x1, y1+1, 1, guiHeight, st, '┃')
-	fill(s, x2+1, y1+1, 1, guiHeight, st, '┃')
-	s.SetCell(x1, y1, st, '┌')
-	s.SetCell(x1, y2+1, st, '└')
-	s.SetCell(x2+1, y1, st, '┐')
+	fill(s, x1, y1-1, guiWidth+1, 1, st, '━')
+	fill(s, x1, y2+1, guiWidth+1, 1, st, '━')
+	fill(s, x1-1, y1, 1, guiHeight+1, st, '┃')
+	fill(s, x2+1, y1, 1, guiHeight+1, st, '┃')
+	s.SetCell(x1-1, y1-1, st, '┌')
+	s.SetCell(x1-1, y2+1, st, '└')
+	s.SetCell(x2+1, y1-1, st, '┐')
 	s.SetCell(x2+1, y2+1, st, '┘')
 }
 

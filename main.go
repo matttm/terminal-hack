@@ -33,13 +33,13 @@ func main() {
 	// quit := make(chan struct{})
 	w, h := s.Size()
 	shift := (w / 2) - (2*w/6+2+8+2)/2
-	x1, y1, dy, dx := shift, constants.OFFSET, h-2*constants.OFFSET, w/6
-	symbolCount := 25
-	symbolLength := 4
-	words, _ := utilities.GetWordList(symbolCount, symbolLength)
+	x1, y1, dy, dx := shift, constants.OFFSET, h-8, w/6
 
+	wordCount := 25
+	wordLength := 4
+	words, _ := utilities.GetWordList(wordCount, wordLength)
 	totalChCount := dx * dy
-	currentChCount := symbolCount * symbolLength
+	currentChCount := wordCount * wordLength
 	neededChCnt := totalChCount - currentChCount
 	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
 	hexOffsets := utilities.GenerateHexOffsets(dy, 2)
@@ -52,8 +52,8 @@ func main() {
 
 	c := container.NewContainer(s, x1, y1, dy, dx)
 	hexc := container.NewContainer(s, x1+dx+2, y1, dy, 8)
-	livesc := container.NewContainer(s, x1, y1-2, 2, dx)
 	out := container.CreateMessageContainer(s, x1+dx+2+8+2, y1, dy, dx)
+	livesc := container.NewContainer(s, x1, y1-1, 1, dx)
 
 	c.InsertWords(words)
 	hexc.InsertWords(hexOffsets)
@@ -64,6 +64,8 @@ func main() {
 	// c.RenderContainer()
 	// offsetColumns.RenderContainer()
 	out.RenderContainer()
+	livesc.RenderContainer()
+
 	c.RenderSymbols()
 	hexc.RenderSymbols()
 	livesc.RenderSymbols()
