@@ -95,9 +95,9 @@ mainloop:
 
 	for {
 		livesc.ClearContainer()
-		_, _y := livesc.WriteLineAtPosition(0, 1, "Robco Technologies (TM) Termlink Protocol")
-		_, _y = livesc.WriteLineAtPosition(_y, 1, "Enter Password Now")
-		_, _y = livesc.WriteLineAtPosition(_y, 1, fmt.Sprintf("%d ATTEMPT(S) REMAINING", lives))
+		livesc.WriteLineAtPosition(0, 1, "Robco Industries (TM) Termlink Protocol")
+		livesc.WriteLineAtPosition(1, 1, "Enter Password Now")
+		livesc.WriteLineAtPosition(3, 1, fmt.Sprintf("%d ATTEMPT(S) REMAINING", lives))
 		escc.WriteLineAtPosition(0, 1, "Press ESC to exit")
 		ev := s.PollEvent()
 		switch ev := ev.(type) {
