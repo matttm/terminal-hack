@@ -1,23 +1,38 @@
 package utilities
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"math/rand"
-	"net/http"
+	"os"
 	"strings"
 )
 
 func GetWordList(count, length int) ([]string, error) {
-	res, err := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=%d", count, length))
+	data, err := os.ReadFile("/usr/share/dict/words")
 	if err != nil {
 		panic(err)
 	}
-	_body, _ := io.ReadAll(res.Body)
-	var words []string
-	json.Unmarshal(_body, &words)
-	return words, nil
+	filter := func(array []string, cb func(string) bool) []string {
+		ret := []string{}
+		for _, w := range array {
+			if cb(w) {
+				ret = append(ret, w)
+			}
+		}
+		return ret
+	}
+	s := string(data)
+	words := strings.Split(s, "\n")
+	words = filter(words, func(s string) bool { return len(s) == length })
+
+	// res, err := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=%d", count, length))
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// _body, _ := io.ReadAll(res.Body)
+	// var words []string
+	// json.Unmarshal(_body, &words)
+	return words[:count], nil
 }
 func BinarySearch(A []int, left, right, target int) int {
 	return 0

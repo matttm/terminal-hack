@@ -33,7 +33,7 @@ func main() {
 	// quit := make(chan struct{})
 	w, h := s.Size()
 	shift := (w / 2) - (2*w/6+2+8+2)/2
-	x1, y1, dy, dx := shift, constants.OFFSET, h-12, w/6
+	x1, y1, dy, dx := shift, constants.OFFSET+4, h-12, w/6
 
 	wordCount := 25
 	wordLength := 4
@@ -53,7 +53,8 @@ func main() {
 	c := container.NewContainer(s, x1, y1, dy, dx)
 	hexc := container.NewContainer(s, x1+dx+2, y1, dy, 8)
 	out := container.CreateMessageContainer(s, x1+dx+2+8+2, y1, dy, dx)
-	livesc := container.NewContainer(s, x1, y1-4, 4, 2*dx+2+8+2)
+	livesc := container.NewContainer(s, x1, y1-5, 4, 2*dx+2+8+2)
+	escc := container.NewContainer(s, x1, y1+dy+2, 1, 2*dx+2+8+2)
 
 	c.InsertWords(words)
 	hexc.InsertWords(hexOffsets)
@@ -65,6 +66,7 @@ func main() {
 	// offsetColumns.RenderContainer()
 	out.RenderContainer()
 	livesc.RenderContainer()
+	escc.RenderContainer()
 
 	c.RenderSymbols()
 	hexc.RenderSymbols()
@@ -93,9 +95,10 @@ mainloop:
 
 	for {
 		livesc.ClearContainer()
-		livesc.WriteLineAtPosition(0, 1, "Robco Technologies (TM) Termlink Protocol")
-		livesc.WriteLineAtPosition(1, 1, "Enter Password Now")
-		livesc.WriteLineAtPosition(2, 1, fmt.Sprintf("%d ATTEMPT(S) REMAINING", lives))
+		_, _y := livesc.WriteLineAtPosition(0, 1, "Robco Technologies (TM) Termlink Protocol")
+		_, _y = livesc.WriteLineAtPosition(_y, 1, "Enter Password Now")
+		_, _y = livesc.WriteLineAtPosition(_y, 1, fmt.Sprintf("%d ATTEMPT(S) REMAINING", lives))
+		escc.WriteLineAtPosition(0, 1, "Press ESC to exit")
 		ev := s.PollEvent()
 		switch ev := ev.(type) {
 		case *tcell.EventKey:
