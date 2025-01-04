@@ -14,7 +14,7 @@ const SELECTED_FG = tcell.ColorGreen
 
 var SELECTED_BG = WORD_BG
 
-const DUD_FG = tcell.Color34
+var DUD_FG = WORD_FG
 
 var DUD_BG = WORD_BG
 
