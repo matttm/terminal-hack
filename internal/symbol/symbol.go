@@ -3,7 +3,7 @@ package symbol
 import (
 	"terminal_hack/internal/constants"
 
-	"github.com/gdamore/tcell/termbox"
+	"github.com/gdamore/tcell"
 	"github.com/google/uuid"
 )
 
@@ -29,14 +29,14 @@ func (s *Symbol) Length() int {
 func (s *Symbol) InsertRune(r Rune) {
 	s.Runes = append(s.Runes, r)
 }
-func (s *Symbol) FG() termbox.Attribute {
+func (s *Symbol) FG() tcell.Color {
 	if len(s.Runes) > 1 {
 		return constants.WORD_FG
 	} else {
 		return constants.DUD_FG
 	}
 }
-func (s *Symbol) BG() termbox.Attribute {
+func (s *Symbol) BG() tcell.Color {
 	if len(s.Runes) > 1 {
 		return constants.WORD_BG
 	} else {

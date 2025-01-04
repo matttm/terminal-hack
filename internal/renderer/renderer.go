@@ -1,55 +1,53 @@
 package renderer
 
 import (
-	// "fmt"
+	"terminal_hack/internal/constants"
 	"terminal_hack/internal/symbol"
 
-	"github.com/gdamore/tcell/termbox"
+	"github.com/gdamore/tcell"
 	"github.com/google/uuid"
 )
-
-const fg = termbox.ColorGreen
-const bg = termbox.ColorBlack
 
 const offset_x = 5
 const offset_y = 5
 
-func RenderRectangle(x1, y1, vpWidth, vpHeight int) {
+func RenderRectangle(s tcell.Screen, x1, y1, vpWidth, vpHeight int) {
 
-	const coldef = termbox.ColorDefault
 	guiWidth := vpWidth
 	guiHeight := vpHeight
 	x2 := x1 + guiWidth
 	y2 := y1 + guiHeight
-	fill(x1+1, y1, guiWidth, 1, termbox.Cell{Ch: '━'})
-	fill(x1+1, y2+1, guiWidth, 1, termbox.Cell{Ch: '━'})
-	fill(x1, y1+1, 1, guiHeight, termbox.Cell{Ch: '┃'})
-	fill(x2+1, y1+1, 1, guiHeight, termbox.Cell{Ch: '┃'})
-	termbox.SetCell(x1, y1, '┌', coldef, coldef)
-	termbox.SetCell(x1, y2+1, '└', coldef, coldef)
-	termbox.SetCell(x2+1, y1, '┐', coldef, coldef)
-	termbox.SetCell(x2+1, y2+1, '┘', coldef, coldef)
-	termbox.Flush()
+	var st tcell.Style = constants.GetSelectedStyle()
+	fill(s, x1, y1-1, guiWidth+1, 1, st, '━')
+	fill(s, x1, y2+1, guiWidth+1, 1, st, '━')
+	fill(s, x1-1, y1, 1, guiHeight+1, st, '┃')
+	fill(s, x2+1, y1, 1, guiHeight+1, st, '┃')
+	s.SetCell(x1-1, y1-1, st, '┌')
+	s.SetCell(x1-1, y2+1, st, '└')
+	s.SetCell(x2+1, y1-1, st, '┐')
+	s.SetCell(x2+1, y2+1, st, '┘')
 }
 
-func fill(x, y, w, h int, cell termbox.Cell) {
+func fill(s tcell.Screen, x, y, w, h int, st tcell.Style, r rune) {
 	for ly := 0; ly < h; ly++ {
 		for lx := 0; lx < w; lx++ {
-			termbox.SetCell(x+lx, y+ly, cell.Ch, cell.Fg, cell.Bg)
+			s.SetCell(x+lx, y+ly, st, r)
 		}
 	}
 }
-func ClearRectangle(x, y, w, h int) {
-	fill(x, y, w, h, termbox.Cell{Ch: 'x', Fg: termbox.ColorBlack, Bg: termbox.ColorBlack})
+func ClearRectangle(s tcell.Screen, x, y, w, h int) {
+	var st tcell.Style = constants.GetEmptyStyle()
+	fill(s, x, y, w, h, st, 'x')
 }
-func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
-func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
+
+// func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
+// func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
 
 // Function RenderSymbolsInContainer
 // desc given a container with a symbols slice, render them to screen, bounded
 //
 //	by container bounds
-func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols [][]*symbol.Symbol) {
+func RenderSymbolsInContainer(s tcell.Screen, x1, y1, vpWidth, vpHeight int, symbols [][]*symbol.Symbol) {
 	seen := make(map[uuid.UUID]bool)
 	for _, symRow := range symbols {
 		for _, sym := range symRow {
@@ -61,7 +59,11 @@ func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols [][]*symbol
 			}
 			seen[sym.Id] = true
 			for _, _rune := range sym.Runes {
-				termbox.SetCell(_rune.X, _rune.Y, _rune.Ch, sym.FG(), sym.BG())
+				var st tcell.Style
+				st = st.
+					Foreground(sym.FG()).
+					Background(sym.BG())
+				s.SetCell(_rune.X, _rune.Y, st, _rune.Ch)
 			}
 		}
 	}
@@ -69,13 +71,13 @@ func RenderSymbolsInContainer(x1, y1, vpWidth, vpHeight int, symbols [][]*symbol
 
 // Function ColorRune
 // desc change colors of given symbol
-func ColorRune(s *symbol.Symbol, fg, bg termbox.Attribute) {
+func ColorRune(screen tcell.Screen, s *symbol.Symbol, fg, bg tcell.Color) {
 	for _, r := range s.Runes {
-		termbox.SetCell(r.X, r.Y, r.Ch, fg, bg)
-		err := termbox.Flush()
-		if err != nil {
-			panic(err)
-		}
+		var st tcell.Style
+		st = st.
+			Foreground(fg).
+			Background(bg)
+		screen.SetCell(r.X, r.Y, st, r.Ch)
 	}
 
 }
@@ -85,11 +87,15 @@ func ColorRune(s *symbol.Symbol, fg, bg termbox.Attribute) {
 // returns top-left corner of text's bounding box
 //
 //	useful for determining position for next message
-func WriteLine(_x, _y int, w, h int, s string, fg, bg termbox.Attribute) (int, int) {
+func WriteLine(screen tcell.Screen, _x, _y int, w, h int, s string, fg, bg tcell.Color) (int, int) {
 	runes := []rune(s)
 	x, y := _x, _y
 	for _, r := range runes {
-		termbox.SetCell(x, y, r, fg, bg)
+		var st tcell.Style
+		st = st.
+			Foreground(fg).
+			Background(bg)
+		screen.SetCell(x, y, st, r)
 		x++
 		if x == _x+w-1 {
 			x = _x
