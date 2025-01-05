@@ -1,6 +1,6 @@
 # terminal-hack
 
-Development: Inactive
+Development: Main development completed with intermittent improvements
 
 ## Description
 
