@@ -121,8 +121,11 @@ mainloop:
 				cursor.Displace(1, 0)
 				break
 			case tcell.KeyEnter:
-				_, winStr := carnie.IsWinner(cursor.GetSelectedSymbol())
-				out.AddNewMessage(winStr)
+				isDone, msg := carnie.IsEnd(cursor.GetSelectedSymbol())
+				if isDone {
+					panic(msg)
+				}
+				out.AddNewMessage(msg)
 				lives -= 1
 				break
 			}
