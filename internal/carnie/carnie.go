@@ -19,7 +19,7 @@ func NewCarnie(symbols [][]*symbol.Symbol) *Carnie {
 	return c
 }
 
-func (c *Carnie) IsWinner(s *symbol.Symbol) (bool, string) {
+func (c *Carnie) IsEnd(s *symbol.Symbol) (bool, string) {
 	win := c.winningWord.Id == s.Id
 	if win {
 		return true, "You won"
@@ -30,7 +30,7 @@ func (c *Carnie) IsWinner(s *symbol.Symbol) (bool, string) {
 	}
 	fraction := c.findCommonCharacters(s.Str)
 	if c.lives == 0 {
-		return false, fmt.Sprintf("Come back when you get some money buddy. Winning word is %s", c.winningWord.Str)
+		return true, fmt.Sprintf("Come back when you get some money buddy. Winning word is %s", c.winningWord.Str)
 	}
 	return false, fmt.Sprintf("%s letters correct. %d lives remaining", fraction, c.lives)
 }
