@@ -64,9 +64,9 @@ func main() {
 
 	// c.RenderContainer()
 	// offsetColumns.RenderContainer()
-	out.RenderContainer()
-	livesc.RenderContainer()
-	escc.RenderContainer()
+	// out.RenderContainer()
+	// livesc.RenderContainer()
+	// escc.RenderContainer()
 
 	c.RenderSymbols()
 	hexc.RenderSymbols()
