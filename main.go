@@ -26,14 +26,15 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%v\n", e)
 		os.Exit(1)
 	}
-
+	pad := 2
+	hexCWidth := 8
 	s.SetStyle(constants.GetEmptyStyle())
 	s.Clear()
 
-	// quit := make(chan struct{})
 	w, h := s.Size()
-	shift := (w / 2) - (2*w/6+2+8+2)/2
-	x1, y1, dy, dx := shift, constants.OFFSET+4, h-12, w/6
+	dy, dx := h-12, w/6
+	shift := (w / 2) - (2*dx+pad+hexCWidth+pad)/2
+	x1, y1 := shift, constants.OFFSET+4
 
 	wordCount := 25
 	wordLength := 4
@@ -47,26 +48,17 @@ func main() {
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
 	})
-
-	// TODO: put container and offset into a "hex-panel"
-
 	c := container.NewContainer(s, x1, y1, dy, dx)
 	hexc := container.NewContainer(s, x1+dx+2, y1, dy, 8)
 	out := container.CreateMessageContainer(s, x1+dx+2+8+2, y1, dy, dx)
-	livesc := container.NewContainer(s, x1, y1-5, 4, 2*dx+2+8+2)
-	escc := container.NewContainer(s, x1, y1+dy+2, 1, 2*dx+2+8+2)
+	livesc := container.NewContainer(s, x1, y1-5, 4, 2*dx+pad+hexCWidth+pad)
+	escc := container.NewContainer(s, x1, y1+dy+2, 1, 2*dx+pad+hexCWidth+pad)
 
 	c.InsertWords(words)
 	hexc.InsertWords(hexOffsets)
 	livesc.InsertWords([]string{})
 
 	carnie := carnie.NewCarnie(c.GetSymbols())
-
-	// c.RenderContainer()
-	// offsetColumns.RenderContainer()
-	// out.RenderContainer()
-	// livesc.RenderContainer()
-	// escc.RenderContainer()
 
 	c.RenderSymbols()
 	hexc.RenderSymbols()
