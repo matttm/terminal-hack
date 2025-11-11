@@ -107,8 +107,8 @@ func (c *Container) GetSymbols() [][]*symbol.Symbol {
 // desc writes text at given point, bounded by a container
 // returns top-left point of text's bounding-box
 func (c *Container) WriteLineAtPosition(pos, lines int, s string) (int, int) {
-	y := c.y1 + lines + pos
-	x, _ := renderer.WriteLine(c.s, c.x1, y, c.columns, c.rows, s, constants.DUD_FG, constants.DUD_BG)
+	y := c.y1 + 1 + pos
+	x, y := renderer.WriteLine(c.s, c.x1, y, c.columns, c.rows, s, constants.DUD_FG, constants.DUD_BG)
 	return x, y
 }
 func (c *Container) ClearContainer() {

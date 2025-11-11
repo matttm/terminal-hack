@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"terminal_hack/internal/carnie"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
@@ -39,6 +40,11 @@ func main() {
 	wordCount := 25
 	wordLength := 4
 	words, _ := utilities.GetWordList(wordCount, wordLength)
+
+	for i, word := range words {
+		words[i] = strings.ToLower(word)
+
+	}
 	totalChCount := dx * dy
 	currentChCount := wordCount * wordLength
 	neededChCnt := totalChCount - currentChCount
@@ -59,6 +65,12 @@ func main() {
 	livesc.InsertWords([]string{})
 
 	carnie := carnie.NewCarnie(c.GetSymbols())
+
+	// c.RenderContainer()
+	// offsetColumns.RenderContainer()
+	// out.RenderContainer()
+	// livesc.RenderContainer()
+	// escc.RenderContainer()
 
 	c.RenderSymbols()
 	hexc.RenderSymbols()

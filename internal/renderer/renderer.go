@@ -102,5 +102,5 @@ func WriteLine(screen tcell.Screen, _x, _y int, w, h int, s string, fg, bg tcell
 			y += 1
 		}
 	}
-	return _x, _y
+	return x, y
 }

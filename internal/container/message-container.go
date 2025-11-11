@@ -33,11 +33,12 @@ func (mc *MessageContainer) RenderContainer() {
 func (mc *MessageContainer) AddNewMessage(s string) {
 	mc.messages = append(mc.messages, message{text: s})
 	mc.ClearContainer()
-	lines := mc.getLineCountOfMessage(s)
 	pos := 0
 	for i := len(mc.messages) - 1; i >= 0; i-- {
 		m := mc.messages[i]
+		lines := mc.getLineCountOfMessage(m.text)
 		_, pos = mc.gui.WriteLineAtPosition(pos, lines, m.text)
+		pos = pos - mc.gui.y1 + 1
 	}
 }
 func (mc *MessageContainer) getLineCountOfMessage(s string) int {
