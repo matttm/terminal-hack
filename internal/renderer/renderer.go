@@ -1,3 +1,5 @@
+// Package renderer provides low-level rendering functions for drawing UI elements
+// to the terminal screen in the hacking game.
 package renderer
 
 import (
@@ -11,6 +13,8 @@ import (
 const offset_x = 5
 const offset_y = 5
 
+// RenderRectangle draws a bordered rectangle on the screen at the specified position and size.
+// Uses Unicode box-drawing characters for the border.
 func RenderRectangle(s tcell.Screen, x1, y1, vpWidth, vpHeight int) {
 
 	guiWidth := vpWidth
@@ -28,6 +32,7 @@ func RenderRectangle(s tcell.Screen, x1, y1, vpWidth, vpHeight int) {
 	s.SetCell(x2+1, y2+1, st, '┘')
 }
 
+// fill fills a rectangular area with the specified rune and style.
 func fill(s tcell.Screen, x, y, w, h int, st tcell.Style, r rune) {
 	for ly := 0; ly < h; ly++ {
 		for lx := 0; lx < w; lx++ {
@@ -35,18 +40,16 @@ func fill(s tcell.Screen, x, y, w, h int, st tcell.Style, r rune) {
 		}
 	}
 }
+
+// ClearRectangle clears a rectangular area by filling it with the empty style.
 func ClearRectangle(s tcell.Screen, x, y, w, h int) {
 	var st tcell.Style = constants.GetEmptyStyle()
 	fill(s, x, y, w, h, st, 'x')
 }
 
-// func drawHorizontalSegment(x1, y1, w int, cell termbox.Cell) { fill(x1, y1, w, 1, cell) }
-// func drawVerticalSegment(x1, y1, h int, cell termbox.Cell)   { fill(x1, y1, 1, h, cell) }
-
-// Function RenderSymbolsInContainer
-// desc given a container with a symbols slice, render them to screen, bounded
-//
-//	by container bounds
+// RenderSymbolsInContainer renders all symbols within a container to the screen.
+// It efficiently tracks which symbols have been rendered to avoid duplicates,
+// as symbols may span multiple grid cells.
 func RenderSymbolsInContainer(s tcell.Screen, x1, y1, vpWidth, vpHeight int, symbols [][]*symbol.Symbol) {
 	seen := make(map[uuid.UUID]bool)
 	for _, symRow := range symbols {
@@ -69,8 +72,8 @@ func RenderSymbolsInContainer(s tcell.Screen, x1, y1, vpWidth, vpHeight int, sym
 	}
 }
 
-// Function ColorRune
-// desc change colors of given symbol
+// ColorRune changes the foreground and background colors of all runes in a symbol.
+// Used for highlighting, selection, and cursor effects.
 func ColorRune(screen tcell.Screen, s *symbol.Symbol, fg, bg tcell.Color) {
 	for _, r := range s.Runes {
 		var st tcell.Style
@@ -82,11 +85,9 @@ func ColorRune(screen tcell.Screen, s *symbol.Symbol, fg, bg tcell.Color) {
 
 }
 
-// Function WriteLine
-// desc writes a line of text at given y value w provided fg/bg
-// returns top-left corner of text's bounding box
-//
-//	useful for determining position for next message
+// WriteLine writes a line of text at the specified position with the given colors.
+// Text automatically wraps to the next line when reaching the container width.
+// Returns the position (x, y) after the last character written.
 func WriteLine(screen tcell.Screen, _x, _y int, w, h int, s string, fg, bg tcell.Color) (int, int) {
 	runes := []rune(s)
 	x, y := _x, _y
@@ -102,5 +103,5 @@ func WriteLine(screen tcell.Screen, _x, _y int, w, h int, s string, fg, bg tcell
 			y += 1
 		}
 	}
-	return _x, _y
+	return x, y
 }
