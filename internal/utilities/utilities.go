@@ -1,3 +1,5 @@
+// Package utilities provides helper functions for word generation, random character creation,
+// and hex offset formatting used in the terminal hacking game.
 package utilities
 
 import (
@@ -7,6 +9,9 @@ import (
 	"strings"
 )
 
+// GetWordList retrieves a list of words from the system dictionary file.
+// It filters words by the specified length and returns a random selection.
+// Returns count words, each with the specified length.
 func GetWordList(count, length int) ([]string, error) {
 	data, err := os.ReadFile("/usr/share/dict/words")
 	if err != nil {
@@ -37,9 +42,9 @@ func GetWordList(count, length int) ([]string, error) {
 	// json.Unmarshal(_body, &words)
 	return words[:count], nil
 }
-func BinarySearch(A []int, left, right, target int) int {
-	return 0
-}
+
+// GetRandomRune returns a random special character from a predefined set.
+// Used for generating "dud" characters to fill spaces between words.
 func GetRandomRune() rune {
 	// Define a range of Unicode code points for weird characters
 	// These ranges include various non-Latin scripts, symbols, and other unusual characters
@@ -50,6 +55,8 @@ func GetRandomRune() rune {
 
 	return r
 }
+
+// GenerateUnicodeString generates a single-character string using a random special character.
 func GenerateUnicodeString() string {
 	n := 1
 	runes := make([]rune, n)
@@ -58,6 +65,9 @@ func GenerateUnicodeString() string {
 	}
 	return string(runes)
 }
+
+// GenerateRandomStrings generates count random single-character strings.
+// Used to fill the game grid with "dud" characters between words.
 func GenerateRandomStrings(count int) []string {
 	n := count
 	s := make([]string, n)
@@ -66,6 +76,10 @@ func GenerateRandomStrings(count int) []string {
 	}
 	return s
 }
+
+// GenerateHexOffsets generates a list of hexadecimal memory addresses.
+// Used to display memory offsets in the left column of the game grid.
+// lpadding adds trailing spaces to each hex string for alignment.
 func GenerateHexOffsets(count, lpadding int) []string {
 	ans := []string{}
 	var padSb strings.Builder

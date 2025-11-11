@@ -1,3 +1,6 @@
+// Package main implements a terminal-based hacking mini-game inspired by Fallout's terminal hacking.
+// The game presents the player with a grid of words and symbols where they must guess the correct password
+// within a limited number of attempts.
 package main
 
 import (
@@ -16,6 +19,10 @@ import (
 	"github.com/gdamore/tcell"
 )
 
+// main initializes and runs the terminal hacking game.
+// It sets up the screen, creates the game grid with words and symbols,
+// initializes the cursor and game state, and enters the main game loop
+// to handle player input.
 func main() {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	s, e := tcell.NewScreen()
