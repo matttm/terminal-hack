@@ -32,7 +32,7 @@ func NewValidator(symbols [][]*symbol.Symbol) *Validator {
 func (c *Validator) IsEnd(s *symbol.Symbol) (bool, string) {
 	win := c.winningWord.Id == s.Id
 	if win {
-		return true, "You won"
+		return true, "Password accepted. Welcome back!"
 	}
 	c.lives -= 1
 	if len(s.Str) <= 1 {
@@ -40,7 +40,7 @@ func (c *Validator) IsEnd(s *symbol.Symbol) (bool, string) {
 	}
 	fraction := c.findCommonCharacters(s.Str)
 	if c.lives == 0 {
-		return true, fmt.Sprintf("Come back when you get some money buddy. Winning word is %s", c.winningWord.Str)
+		return true, fmt.Sprintf("Terminal locked. Winning word is %s", c.winningWord.Str)
 	}
 	return false, fmt.Sprintf("%s letters correct. %d lives remaining", fraction, c.lives)
 }

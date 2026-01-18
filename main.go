@@ -6,7 +6,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
@@ -52,16 +51,14 @@ func run() error {
 	x1, y1 := shift, constants.OFFSET+4
 
 	wordCount := 25
-	wordLength := 4
+	wordLength := 5
 	words, err := utilities.GetWordList(wordCount, wordLength)
 	if err != nil {
 		return fmt.Errorf("failed to get word list: %w", err)
 	}
-
-	for i, word := range words {
-		words[i] = strings.ToLower(word)
-
-	}
+	// for i, word := range words {
+	// 	words[i] = strings.ToLower(word)
+	// }
 	totalChCount := dx * dy
 	currentChCount := wordCount * wordLength
 	neededChCnt := totalChCount - currentChCount
@@ -106,13 +103,9 @@ func run() error {
 	cursor := cursor.InitializeCursor(s, c, 0, 0, sym)
 	ticker := time.NewTicker(500 * time.Millisecond)
 	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				// fmt.Println("Blink")
-				cursor.Blink()
-				s.Show()
-			}
+		for range ticker.C {
+			cursor.Blink()
+			s.Show()
 		}
 	}()
 	defer ticker.Stop()
