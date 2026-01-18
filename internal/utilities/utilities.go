@@ -13,34 +13,23 @@ import (
 // It filters words by the specified length and returns a random selection.
 // Returns count words, each with the specified length.
 func GetWordList(count, length int) ([]string, error) {
-	data, err := os.ReadFile("/usr/share/dict/words")
+	data, err := os.ReadFile("./words/1")
 	if err != nil {
-		panic(err)
-	}
-	filter := func(array []string, cb func(string) bool) []string {
-		ret := []string{}
-		for _, w := range array {
-			if cb(w) {
-				ret = append(ret, w)
-			}
-		}
-		return ret
+		return nil, fmt.Errorf("failed to read word list: %w", err)
 	}
 	s := string(data)
 	words := strings.Split(s, "\n")
-	words = filter(words, func(s string) bool { return len(s) == length })
+	// words = filter(words, func(s string) bool { return len(s) == length })
+
+	// Convert all words to uppercase
+	for i := range words {
+		words[i] = strings.ToUpper(words[i])
+	}
+
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
 	})
-
-	// res, err := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=%d", count, length))
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// _body, _ := io.ReadAll(res.Body)
-	// var words []string
-	// json.Unmarshal(_body, &words)
-	return words[:count], nil
+	return words[:min(count, len(words))], nil
 }
 
 // GetRandomRune returns a random special character from a predefined set.

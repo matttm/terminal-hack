@@ -24,6 +24,13 @@ import (
 // initializes the cursor and game state, and enters the main game loop
 // to handle player input.
 func main() {
+	if err := run(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	s, e := tcell.NewScreen()
 	if e != nil {
@@ -46,7 +53,10 @@ func main() {
 
 	wordCount := 25
 	wordLength := 4
-	words, _ := utilities.GetWordList(wordCount, wordLength)
+	words, err := utilities.GetWordList(wordCount, wordLength)
+	if err != nil {
+		return fmt.Errorf("failed to get word list: %w", err)
+	}
 
 	for i, word := range words {
 		words[i] = strings.ToLower(word)
@@ -67,9 +77,15 @@ func main() {
 	livesc := container.NewContainer(s, x1, y1-5, 4, 2*dx+pad+hexCWidth+pad)
 	escc := container.NewContainer(s, x1, y1+dy+2, 1, 2*dx+pad+hexCWidth+pad)
 
-	c.InsertWords(words)
-	hexc.InsertWords(hexOffsets)
-	livesc.InsertWords([]string{})
+	if err := c.InsertWords(words); err != nil {
+		return fmt.Errorf("failed to insert words: %w", err)
+	}
+	if err := hexc.InsertWords(hexOffsets); err != nil {
+		return fmt.Errorf("failed to insert hex offsets: %w", err)
+	}
+	if err := livesc.InsertWords([]string{}); err != nil {
+		return fmt.Errorf("failed to initialize lives container: %w", err)
+	}
 
 	carnie := carnie.NewCarnie(c.GetSymbols())
 
@@ -85,7 +101,7 @@ func main() {
 	//
 	sym, err := c.GetSymbolAt(0, 0)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("failed to get symbol: %w", err)
 	}
 	cursor := cursor.InitializeCursor(s, c, 0, 0, sym)
 	ticker := time.NewTicker(500 * time.Millisecond)
@@ -134,7 +150,9 @@ mainloop:
 			case tcell.KeyEnter:
 				isDone, msg := carnie.IsEnd(cursor.GetSelectedSymbol())
 				if isDone {
-					panic(msg)
+					s.Fini()
+					fmt.Println(msg)
+					return nil
 				}
 				out.AddNewMessage(msg)
 				lives -= 1
@@ -144,4 +162,5 @@ mainloop:
 
 	}
 	s.Fini()
+	return nil
 }
