@@ -150,6 +150,8 @@ mainloop:
 			case tcell.KeyEnter:
 				isDone, msg := carnie.IsEnd(cursor.GetSelectedSymbol())
 				if isDone {
+					s.Clear()
+					s.Sync()
 					s.Fini()
 					fmt.Println(msg)
 					return nil
@@ -161,6 +163,8 @@ mainloop:
 		}
 
 	}
+	s.Clear()
+	s.Sync()
 	s.Fini()
 	return nil
 }
