@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"terminal_hack/internal/carnie"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
 	"terminal_hack/internal/utilities"
+	"terminal_hack/internal/validator"
 
 	"math/rand"
 	"time"
@@ -87,7 +87,7 @@ func run() error {
 		return fmt.Errorf("failed to initialize lives container: %w", err)
 	}
 
-	carnie := carnie.NewCarnie(c.GetSymbols())
+	validator := validator.NewValidator(c.GetSymbols())
 
 	// c.RenderContainer()
 	// offsetColumns.RenderContainer()
@@ -148,7 +148,7 @@ mainloop:
 				cursor.Displace(1, 0)
 				break
 			case tcell.KeyEnter:
-				isDone, msg := carnie.IsEnd(cursor.GetSelectedSymbol())
+				isDone, msg := validator.IsEnd(cursor.GetSelectedSymbol())
 				if isDone {
 					s.Clear()
 					s.Sync()
