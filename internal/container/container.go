@@ -5,6 +5,7 @@ package container
 import (
 	"fmt"
 	"terminal_hack/internal/constants"
+	"terminal_hack/internal/logger"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
 
@@ -39,12 +40,14 @@ func NewContainer(s tcell.Screen, x1, y1, rows, columns int) *Container {
 		c.symbols[i] = make([]*symbol.Symbol, columns)
 	}
 	c.size = 0
+	logger.Debug("Container created", "x", x1, "y", y1, "rows", rows, "columns", columns)
 	return c
 }
 
 // InsertWords inserts multiple words into the container starting from the top-left position.
 // Words are placed sequentially with automatic wrapping to the next row when a row is full.
 func (c *Container) InsertWords(words []string) error {
+	logger.Debug("Inserting words into container", "wordCount", len(words))
 	x := 0
 	y := 0
 	for _, w := range words {
@@ -54,12 +57,14 @@ func (c *Container) InsertWords(words []string) error {
 		var err error
 		x, y, err = c.InsertWord(x, y, w)
 		if err != nil {
+			logger.Error("Failed to insert word", "word", w, "error", err)
 			return fmt.Errorf("failed to insert word: %w", err)
 		}
 		if x == -1 {
 			fmt.Print(x, " ", y, "(", c.rows, " ", c.columns, " ", c.size, ")")
 		}
 	}
+	logger.Debug("Words inserted successfully", "totalCharacters", c.size)
 	return nil
 }
 

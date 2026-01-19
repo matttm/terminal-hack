@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"terminal_hack/internal/constants"
+	"terminal_hack/internal/logger"
 	"terminal_hack/internal/symbol"
 )
 
@@ -23,6 +24,7 @@ func NewValidator(symbols [][]*symbol.Symbol) *Validator {
 	c := new(Validator)
 	c.lives = constants.LIVES
 	c.winningWord = c.selectWinningWord(symbols)
+	logger.Info("Validator initialized", "winningWord", c.winningWord.Str, "lives", c.lives)
 	return c
 }
 
@@ -30,16 +32,21 @@ func NewValidator(symbols [][]*symbol.Symbol) *Validator {
 // It returns true if the player won or ran out of lives, along with an appropriate message.
 // For incorrect guesses, it returns false with feedback about matching characters and remaining lives.
 func (c *Validator) IsEnd(s *symbol.Symbol) (bool, string) {
+	logger.Debug("Checking selection", "selected", s.Str, "winning", c.winningWord.Str)
 	win := c.winningWord.Id == s.Id
 	if win {
+		logger.Info("Player won!", "winningWord", c.winningWord.Str)
 		return true, "Password accepted. Welcome back!"
 	}
 	c.lives -= 1
 	if len(s.Str) <= 1 {
+		logger.Debug("Dud removed", "remainingLives", c.lives)
 		return false, "Dud removed"
 	}
 	fraction := c.findCommonCharacters(s.Str)
+	logger.Info("Incorrect guess", "guessed", s.Str, "match", fraction, "remainingLives", c.lives)
 	if c.lives == 0 {
+		logger.Info("Player lost - out of lives", "winningWord", c.winningWord.Str)
 		return true, fmt.Sprintf("Terminal locked. Winning word is %s", c.winningWord.Str)
 	}
 	return false, fmt.Sprintf("%s letters correct. %d lives remaining", fraction, c.lives)

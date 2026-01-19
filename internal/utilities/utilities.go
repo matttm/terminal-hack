@@ -7,14 +7,17 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"terminal_hack/internal/logger"
 )
 
 // GetWordList retrieves a list of words from the system dictionary file.
 // It filters words by the specified length and returns a random selection.
 // Returns count words, each with the specified length.
 func GetWordList(count, length int) ([]string, error) {
+	logger.Debug("Loading word list", "count", count, "length", length)
 	data, err := os.ReadFile("./words/1")
 	if err != nil {
+		logger.Error("Failed to read word file", "error", err)
 		return nil, fmt.Errorf("failed to read word list: %w", err)
 	}
 	s := string(data)
@@ -29,6 +32,7 @@ func GetWordList(count, length int) ([]string, error) {
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
 	})
+	logger.Debug("Word list loaded and shuffled", "totalWords", len(words), "returning", min(count, len(words)))
 	return words[:min(count, len(words))], nil
 }
 

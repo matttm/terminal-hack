@@ -9,6 +9,7 @@ import (
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
 	"terminal_hack/internal/cursor"
+	"terminal_hack/internal/logger"
 	"terminal_hack/internal/utilities"
 	"terminal_hack/internal/validator"
 
@@ -23,23 +24,39 @@ import (
 // initializes the cursor and game state, and enters the main game loop
 // to handle player input.
 func main() {
+	// Initialize logger
+	if err := logger.Init(); err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to initialize logger: %v\n", err)
+		os.Exit(1)
+	}
+	defer logger.Close()
+
+	logger.Info("Application starting")
+
 	if err := run(); err != nil {
+		logger.Error("Application error", "error", err)
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
+
+	logger.Info("Application exiting normally")
 }
 
 func run() error {
+	logger.Info("Initializing game")
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	s, e := tcell.NewScreen()
 	if e != nil {
+		logger.Error("Failed to create screen", "error", e)
 		fmt.Fprintf(os.Stderr, "%v\n", e)
 		os.Exit(1)
 	}
 	if e = s.Init(); e != nil {
+		logger.Error("Failed to initialize screen", "error", e)
 		fmt.Fprintf(os.Stderr, "%v\n", e)
 		os.Exit(1)
 	}
+	logger.Info("Screen initialized successfully")
 	pad := 2
 	hexCWidth := 8
 	s.SetStyle(constants.GetEmptyStyle())
@@ -50,12 +67,17 @@ func run() error {
 	shift := (w / 2) - (2*dx+pad+hexCWidth+pad)/2
 	x1, y1 := shift, constants.OFFSET+4
 
+	logger.Info("Screen dimensions", "width", w, "height", h)
+
 	wordCount := 25
 	wordLength := 5
+	logger.Info("Loading word list", "count", wordCount, "length", wordLength)
 	words, err := utilities.GetWordList(wordCount, wordLength)
 	if err != nil {
+		logger.Error("Failed to load word list", "error", err)
 		return fmt.Errorf("failed to get word list: %w", err)
 	}
+	logger.Debug("Words loaded", "count", len(words))
 	// for i, word := range words {
 	// 	words[i] = strings.ToLower(word)
 	// }
@@ -111,6 +133,8 @@ func run() error {
 	defer ticker.Stop()
 	lives := constants.LIVES
 
+	logger.Info("Game initialized", "lives", lives, "totalWords", wordCount)
+
 mainloop:
 
 	for {
@@ -125,30 +149,39 @@ mainloop:
 			cursor.ResetSymbol()
 			switch ev.Key() {
 			case tcell.KeyEscape:
+				logger.Info("User pressed ESC, exiting game")
 				break mainloop
 			case tcell.KeyBS:
 				break
 			case tcell.KeyUp:
+				logger.Debug("Cursor moved up")
 				cursor.Displace(0, -1)
 				break
 			case tcell.KeyDown:
+				logger.Debug("Cursor moved down")
 				cursor.Displace(0, 1)
 				break
 			case tcell.KeyLeft:
+				logger.Debug("Cursor moved left")
 				cursor.Displace(-1, 0)
 				break
 			case tcell.KeyRight:
+				logger.Debug("Cursor moved right")
 				cursor.Displace(1, 0)
 				break
 			case tcell.KeyEnter:
-				isDone, msg := validator.IsEnd(cursor.GetSelectedSymbol())
+				selectedSym := cursor.GetSelectedSymbol()
+				logger.Info("User selected symbol", "symbol", selectedSym.Str, "symbolId", selectedSym.Id)
+				isDone, msg := validator.IsEnd(selectedSym)
 				if isDone {
+					logger.Info("Game ended", "message", msg)
 					s.Clear()
 					s.Sync()
 					s.Fini()
 					fmt.Println(msg)
 					return nil
 				}
+				logger.Info("Selection result", "message", msg, "livesRemaining", lives-1)
 				out.AddNewMessage(msg)
 				lives -= 1
 				break
