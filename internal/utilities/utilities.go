@@ -23,13 +23,10 @@ func GetWordList(count, length int) ([]string, error) {
 	}
 	s := string(data)
 	words := strings.Split(s, "\n")
-	// words = filter(words, func(s string) bool { return len(s) == length })
-
 	// Convert all words to uppercase
 	for i := range words {
 		words[i] = strings.ToUpper(words[i])
 	}
-
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
 	})

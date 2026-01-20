@@ -81,21 +81,21 @@ func run() error {
 	// for i, word := range words {
 	// 	words[i] = strings.ToLower(word)
 	// }
-	totalChCount := dx * dy
-	currentChCount := wordCount * wordLength
-	neededChCnt := totalChCount - currentChCount
-	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
-	hexOffsets := utilities.GenerateHexOffsets(dy, constants.HEX_COLUMN_PADDING)
-
-	rand.Shuffle(len(words), func(i, j int) {
-		words[i], words[j] = words[j], words[i]
-	})
 	c := container.NewContainer(s, x1, y1, dy, dx)
 	hexc := container.NewContainer(s, x1+dx+pad, y1, dy, constants.HEX_COLUMN_WIDTH)
 	out := container.CreateMessageContainer(s, x1+dx+pad+constants.HEX_COLUMN_WIDTH+pad, y1, dy, dx)
 	livesc := container.NewContainer(s, x1, y1-5, constants.LIVES_CONTAINER_HEIGHT, 2*dx+pad+hexCWidth+pad)
 	escc := container.NewContainer(s, x1, y1+dy+constants.ESC_CONTAINER_VERTICAL_OFFSET, constants.ESC_CONTAINER_HEIGHT, 2*dx+pad+hexCWidth+pad)
 
+	// totalChCount := dx * dy
+	// currentChCount := wordCount * wordLength
+	neededChCnt := c.RemainingCapacity()
+	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
+	hexOffsets := utilities.GenerateHexOffsets(dy, constants.HEX_COLUMN_PADDING)
+
+	rand.Shuffle(len(words), func(i, j int) {
+		words[i], words[j] = words[j], words[i]
+	})
 	if err := c.InsertWords(words); err != nil {
 		return fmt.Errorf("failed to insert words: %w", err)
 	}
@@ -127,7 +127,7 @@ func run() error {
 	go func() {
 		for range ticker.C {
 			cursor.Blink()
-			s.Show()
+			s.Sync()
 		}
 	}()
 	defer ticker.Stop()
@@ -136,7 +136,6 @@ func run() error {
 	logger.Info("Game initialized", "lives", lives, "totalWords", wordCount)
 
 mainloop:
-
 	for {
 		livesc.ClearContainer()
 		livesc.WriteLineAtPosition(constants.LIVES_TITLE_ROW, constants.UI_TEXT_COLUMN, "Robco Industries (TM) Termlink Protocol")
