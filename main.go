@@ -57,20 +57,20 @@ func run() error {
 		os.Exit(1)
 	}
 	logger.Info("Screen initialized successfully")
-	pad := 2
-	hexCWidth := 8
+	pad := constants.CONTAINER_PADDING
+	hexCWidth := constants.HEX_COLUMN_WIDTH
 	s.SetStyle(constants.GetEmptyStyle())
 	s.Clear()
 
 	w, h := s.Size()
-	dy, dx := h-12, w/6
+	dy, dx := h-constants.SCREEN_HEIGHT_REDUCTION, w/constants.SCREEN_WIDTH_DIVISOR
 	shift := (w / 2) - (2*dx+pad+hexCWidth+pad)/2
-	x1, y1 := shift, constants.OFFSET+4
+	x1, y1 := shift, constants.OFFSET+constants.GAME_AREA_VERTICAL_OFFSET
 
 	logger.Info("Screen dimensions", "width", w, "height", h)
 
-	wordCount := 25
-	wordLength := 5
+	wordCount := constants.DEFAULT_WORD_COUNT
+	wordLength := constants.DEFAULT_WORD_LENGTH
 	logger.Info("Loading word list", "count", wordCount, "length", wordLength)
 	words, err := utilities.GetWordList(wordCount, wordLength)
 	if err != nil {
@@ -85,16 +85,16 @@ func run() error {
 	currentChCount := wordCount * wordLength
 	neededChCnt := totalChCount - currentChCount
 	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
-	hexOffsets := utilities.GenerateHexOffsets(dy, 2)
+	hexOffsets := utilities.GenerateHexOffsets(dy, constants.HEX_COLUMN_PADDING)
 
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
 	})
 	c := container.NewContainer(s, x1, y1, dy, dx)
-	hexc := container.NewContainer(s, x1+dx+2, y1, dy, 8)
-	out := container.CreateMessageContainer(s, x1+dx+2+8+2, y1, dy, dx)
-	livesc := container.NewContainer(s, x1, y1-5, 4, 2*dx+pad+hexCWidth+pad)
-	escc := container.NewContainer(s, x1, y1+dy+2, 1, 2*dx+pad+hexCWidth+pad)
+	hexc := container.NewContainer(s, x1+dx+pad, y1, dy, constants.HEX_COLUMN_WIDTH)
+	out := container.CreateMessageContainer(s, x1+dx+pad+constants.HEX_COLUMN_WIDTH+pad, y1, dy, dx)
+	livesc := container.NewContainer(s, x1, y1-5, constants.LIVES_CONTAINER_HEIGHT, 2*dx+pad+hexCWidth+pad)
+	escc := container.NewContainer(s, x1, y1+dy+constants.ESC_CONTAINER_VERTICAL_OFFSET, constants.ESC_CONTAINER_HEIGHT, 2*dx+pad+hexCWidth+pad)
 
 	if err := c.InsertWords(words); err != nil {
 		return fmt.Errorf("failed to insert words: %w", err)
@@ -123,7 +123,7 @@ func run() error {
 		return fmt.Errorf("failed to get symbol: %w", err)
 	}
 	cursor := cursor.InitializeCursor(s, c, 0, 0, sym)
-	ticker := time.NewTicker(500 * time.Millisecond)
+	ticker := time.NewTicker(constants.CURSOR_BLINK_INTERVAL_MS * time.Millisecond)
 	go func() {
 		for range ticker.C {
 			cursor.Blink()
@@ -139,10 +139,10 @@ mainloop:
 
 	for {
 		livesc.ClearContainer()
-		livesc.WriteLineAtPosition(0, 1, "Robco Industries (TM) Termlink Protocol")
-		livesc.WriteLineAtPosition(1, 1, "Enter Password Now")
-		livesc.WriteLineAtPosition(3, 1, fmt.Sprintf("%d ATTEMPT(S) REMAINING", lives))
-		escc.WriteLineAtPosition(0, 1, "Press ESC to exit")
+		livesc.WriteLineAtPosition(constants.LIVES_TITLE_ROW, constants.UI_TEXT_COLUMN, "Robco Industries (TM) Termlink Protocol")
+		livesc.WriteLineAtPosition(constants.LIVES_SUBTITLE_ROW, constants.UI_TEXT_COLUMN, "Enter Password Now")
+		livesc.WriteLineAtPosition(constants.LIVES_COUNT_ROW, constants.UI_TEXT_COLUMN, fmt.Sprintf("%d ATTEMPT(S) REMAINING", lives))
+		escc.WriteLineAtPosition(0, constants.UI_TEXT_COLUMN, "Press ESC to exit")
 		ev := s.PollEvent()
 		switch ev := ev.(type) {
 		case *tcell.EventKey:

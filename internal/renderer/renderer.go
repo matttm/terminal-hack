@@ -10,9 +10,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const offset_x = 5
-const offset_y = 5
-
 // RenderRectangle draws a bordered rectangle on the screen at the specified position and size.
 // Uses Unicode box-drawing characters for the border.
 func RenderRectangle(s tcell.Screen, x1, y1, vpWidth, vpHeight int) {

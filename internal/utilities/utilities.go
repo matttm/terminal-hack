@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"terminal_hack/internal/constants"
 	"terminal_hack/internal/logger"
 )
 
@@ -81,7 +82,7 @@ func GenerateHexOffsets(count, lpadding int) []string {
 	}
 	padding := padSb.String()
 	for i := 0; i < count; i++ {
-		hex := fmt.Sprintf("0x%04x%s", i*8, padding)
+		hex := fmt.Sprintf("0x%04x%s", i*constants.HEX_ADDRESS_INCREMENT, padding)
 		ans = append(ans, hex)
 	}
 	return ans

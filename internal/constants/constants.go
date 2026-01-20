@@ -73,3 +73,68 @@ const TEXT_PADDING = 2
 
 // LIVES is the number of attempts the player has to guess the correct word
 const LIVES = 5
+
+// Screen layout constants
+
+// CONTAINER_PADDING is the padding between containers
+const CONTAINER_PADDING = 2
+
+// HEX_COLUMN_WIDTH is the width of the hexadecimal address column
+const HEX_COLUMN_WIDTH = 8
+
+// HEX_COLUMN_PADDING is the trailing padding for hex addresses
+const HEX_COLUMN_PADDING = 2
+
+// SCREEN_HEIGHT_REDUCTION reduces the available screen height for containers
+const SCREEN_HEIGHT_REDUCTION = 12
+
+// SCREEN_WIDTH_DIVISOR is used to calculate container width from screen width
+const SCREEN_WIDTH_DIVISOR = 6
+
+// GAME_AREA_VERTICAL_OFFSET is the additional vertical offset for the game area
+const GAME_AREA_VERTICAL_OFFSET = 4
+
+// LIVES_CONTAINER_HEIGHT is the height of the lives display container
+const LIVES_CONTAINER_HEIGHT = 4
+
+// ESC_CONTAINER_HEIGHT is the height of the escape instruction container
+const ESC_CONTAINER_HEIGHT = 1
+
+// ESC_CONTAINER_VERTICAL_OFFSET is the offset for the escape instruction container
+const ESC_CONTAINER_VERTICAL_OFFSET = 2
+
+// Game configuration constants
+
+// DEFAULT_WORD_COUNT is the default number of words in the game
+const DEFAULT_WORD_COUNT = 25
+
+// DEFAULT_WORD_LENGTH is the default length of words in the game
+const DEFAULT_WORD_LENGTH = 5
+
+// HEX_ADDRESS_INCREMENT is the increment between hex addresses
+const HEX_ADDRESS_INCREMENT = 8
+
+// CURSOR_BLINK_INTERVAL_MS is the cursor blink interval in milliseconds
+const CURSOR_BLINK_INTERVAL_MS = 500
+
+// Renderer constants
+
+// RENDERER_OFFSET_X is the X offset for rendering
+const RENDERER_OFFSET_X = 5
+
+// RENDERER_OFFSET_Y is the Y offset for rendering
+const RENDERER_OFFSET_Y = 5
+
+// UI Text positioning constants
+
+// LIVES_TITLE_ROW is the row for the title in the lives container
+const LIVES_TITLE_ROW = 0
+
+// LIVES_SUBTITLE_ROW is the row for the subtitle in the lives container
+const LIVES_SUBTITLE_ROW = 1
+
+// LIVES_COUNT_ROW is the row for the remaining lives count
+const LIVES_COUNT_ROW = 3
+
+// UI_TEXT_COLUMN is the standard column for UI text
+const UI_TEXT_COLUMN = 1
