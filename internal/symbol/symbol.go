@@ -3,6 +3,7 @@
 package symbol
 
 import (
+	"slices"
 	"terminal_hack/internal/constants"
 
 	"github.com/gdamore/tcell"
@@ -26,9 +27,9 @@ func NewSymbol() *Symbol {
 	return s
 }
 
-// IsGlyph returns true if this symbol is a single character (a "dud"), false if it's a word.
-func (s *Symbol) IsGlyph() bool {
-	return len(s.Runes) <= 1
+// IsGlyph returns true if this symbol is a dud, false if it's a word.
+func (s *Symbol) IsDud() bool {
+	return slices.Contains(constants.DUDS, s.Str)
 }
 
 // Length returns the number of runes in this symbol.

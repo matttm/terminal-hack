@@ -38,11 +38,11 @@ func (c *Validator) IsEnd(s *symbol.Symbol) (bool, string) {
 		logger.Info("Player won!", "winningWord", c.winningWord.Str)
 		return true, "Password accepted. Welcome back!"
 	}
-	c.lives -= 1
-	if len(s.Str) <= 1 {
-		logger.Debug("Dud removed", "remainingLives", c.lives)
+	if s.IsDud() {
+		logger.Info("Dud removed", "Dud", s.Str)
 		return false, "Dud removed"
 	}
+	c.lives -= 1
 	fraction := c.findCommonCharacters(s.Str)
 	logger.Info("Incorrect guess", "guessed", s.Str, "match", fraction, "remainingLives", c.lives)
 	if c.lives == 0 {

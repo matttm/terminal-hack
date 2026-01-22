@@ -89,6 +89,8 @@ func run() error {
 
 	// totalChCount := dx * dy
 	// currentChCount := wordCount * wordLength
+	// TODO:put more duds and refactor
+	words = append(words, constants.DUDS[0])
 	neededChCnt := c.RemainingCapacity()
 	words = append(words, utilities.GenerateRandomStrings(neededChCnt)...)
 	hexOffsets := utilities.GenerateHexOffsets(dy, constants.HEX_COLUMN_PADDING)

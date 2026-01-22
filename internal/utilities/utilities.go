@@ -16,7 +16,8 @@ import (
 // Returns count words, each with the specified length.
 func GetWordList(count, length int) ([]string, error) {
 	logger.Debug("Loading word list", "count", count, "length", length)
-	data, err := os.ReadFile("./words/1")
+	path := getWordFilePath("1")
+	data, err := os.ReadFile(path)
 	if err != nil {
 		logger.Error("Failed to read word file", "error", err)
 		return nil, fmt.Errorf("failed to read word list: %w", err)
@@ -83,4 +84,18 @@ func GenerateHexOffsets(count, lpadding int) []string {
 		ans = append(ans, hex)
 	}
 	return ans
+}
+func getWordFilePath(difficulty string) string {
+	files, err := os.ReadDir("./words/")
+	if err != nil {
+		logger.Error("Failed to read words directory", "error", err)
+		return "./words/1"
+	}
+	if len(files) == 0 {
+		logger.Warn("No word files found in ./words/")
+		return "./words/1"
+	}
+	// Select a random file
+	randomFile := files[rand.Intn(len(files))]
+	return "./words/" + randomFile.Name()
 }
