@@ -7,40 +7,32 @@ import (
 	"math/rand"
 	"os"
 	"strings"
+	"terminal_hack/internal/constants"
+	"terminal_hack/internal/logger"
 )
 
 // GetWordList retrieves a list of words from the system dictionary file.
 // It filters words by the specified length and returns a random selection.
 // Returns count words, each with the specified length.
 func GetWordList(count, length int) ([]string, error) {
-	data, err := os.ReadFile("/usr/share/dict/words")
+	logger.Debug("Loading word list", "count", count, "length", length)
+	path := getWordFilePath("1")
+	data, err := os.ReadFile(path)
 	if err != nil {
-		panic(err)
-	}
-	filter := func(array []string, cb func(string) bool) []string {
-		ret := []string{}
-		for _, w := range array {
-			if cb(w) {
-				ret = append(ret, w)
-			}
-		}
-		return ret
+		logger.Error("Failed to read word file", "error", err)
+		return nil, fmt.Errorf("failed to read word list: %w", err)
 	}
 	s := string(data)
 	words := strings.Split(s, "\n")
-	words = filter(words, func(s string) bool { return len(s) == length })
+	// Convert all words to uppercase
+	for i := range words {
+		words[i] = strings.ToUpper(words[i])
+	}
 	rand.Shuffle(len(words), func(i, j int) {
 		words[i], words[j] = words[j], words[i]
 	})
-
-	// res, err := http.Get(fmt.Sprintf("https://random-word-api.herokuapp.com/word?number=%d&length=%d", count, length))
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// _body, _ := io.ReadAll(res.Body)
-	// var words []string
-	// json.Unmarshal(_body, &words)
-	return words[:count], nil
+	logger.Debug("Word list loaded and shuffled", "totalWords", len(words), "returning", min(count, len(words)))
+	return words[:min(count, len(words))], nil
 }
 
 // GetRandomRune returns a random special character from a predefined set.
@@ -88,8 +80,22 @@ func GenerateHexOffsets(count, lpadding int) []string {
 	}
 	padding := padSb.String()
 	for i := 0; i < count; i++ {
-		hex := fmt.Sprintf("0x%04x%s", i*8, padding)
+		hex := fmt.Sprintf("0x%04x%s", i*constants.HEX_ADDRESS_INCREMENT, padding)
 		ans = append(ans, hex)
 	}
 	return ans
+}
+func getWordFilePath(difficulty string) string {
+	files, err := os.ReadDir("./words/")
+	if err != nil {
+		logger.Error("Failed to read words directory", "error", err)
+		return "./words/1"
+	}
+	if len(files) == 0 {
+		logger.Warn("No word files found in ./words/")
+		return "./words/1"
+	}
+	// Select a random file
+	randomFile := files[rand.Intn(len(files))]
+	return "./words/" + randomFile.Name()
 }

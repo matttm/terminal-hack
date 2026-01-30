@@ -6,6 +6,7 @@ import (
 	"sync"
 	"terminal_hack/internal/constants"
 	"terminal_hack/internal/container"
+	"terminal_hack/internal/logger"
 	"terminal_hack/internal/renderer"
 	"terminal_hack/internal/symbol"
 
@@ -33,6 +34,7 @@ func InitializeCursor(s tcell.Screen, container *container.Container, x, y int, 
 	c.Selection = symbol
 	c.blinkStatus = false
 	c.s = s
+	logger.Info("Cursor initialized", "x", x, "y", y, "initialSymbol", symbol.Str)
 	return c
 }
 
@@ -75,16 +77,21 @@ func (c *Cursor) Displace(x, y int) {
 // ensuring the cursor doesn't stay on the same multi-character word.
 func (c *Cursor) _displace(x, y int) {
 	if !c.container.IsPointInContainer(c.X+x, c.Y+y) {
+		logger.Debug("Cursor displacement blocked - out of bounds", "attemptedX", c.X+x, "attemptedY", c.Y+y)
 		return
 	}
 	c.X += x
 	c.Y += y
 	tmp, _ := c.container.GetSymbolAt(c.X, c.Y)
 	if tmp == nil {
+		logger.Warn("Cursor landed on nil symbol", "x", c.X, "y", c.Y)
 		return
 	}
 	if c.Selection.Id == tmp.Id {
+		logger.Debug("Cursor on same symbol, continuing displacement")
 		c._displace(x, y)
+	} else {
+		logger.Debug("Cursor moved to new symbol", "x", c.X, "y", c.Y, "symbol", tmp.Str)
 	}
 	c.Selection = tmp
 }

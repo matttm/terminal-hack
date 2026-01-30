@@ -1,53 +1,60 @@
-// Package carnie manages the game logic for the terminal hacking game.
+// Package validator manages the game logic for the terminal hacking game.
 // It handles word selection, guess validation, and game state tracking.
-package carnie
+package validator
 
 import (
 	"fmt"
 	"math/rand"
 	"terminal_hack/internal/constants"
+	"terminal_hack/internal/logger"
 	"terminal_hack/internal/symbol"
 )
 
-// Carnie represents the game master that manages the hacking game state.
+// Validator represents the game master that manages the hacking game state.
 // It tracks the player's remaining lives and the correct winning word.
-type Carnie struct {
+type Validator struct {
 	lives       int            // Number of remaining attempts
 	winningWord *symbol.Symbol // The correct password to guess
 }
 
-// NewCarnie creates a new game master instance.
+// NewValidator creates a new game master instance.
 // It randomly selects a winning word from the provided symbol grid
 // and initializes the player's lives from constants.
-func NewCarnie(symbols [][]*symbol.Symbol) *Carnie {
-	c := new(Carnie)
+func NewValidator(symbols [][]*symbol.Symbol) *Validator {
+	c := new(Validator)
 	c.lives = constants.LIVES
 	c.winningWord = c.selectWinningWord(symbols)
+	logger.Info("Validator initialized", "winningWord", c.winningWord.Str, "lives", c.lives)
 	return c
 }
 
 // IsEnd checks if the game should end based on the player's selection.
 // It returns true if the player won or ran out of lives, along with an appropriate message.
 // For incorrect guesses, it returns false with feedback about matching characters and remaining lives.
-func (c *Carnie) IsEnd(s *symbol.Symbol) (bool, string) {
+func (c *Validator) IsEnd(s *symbol.Symbol) (bool, string) {
+	logger.Debug("Checking selection", "selected", s.Str, "winning", c.winningWord.Str)
 	win := c.winningWord.Id == s.Id
 	if win {
-		return true, "You won"
+		logger.Info("Player won!", "winningWord", c.winningWord.Str)
+		return true, "Password accepted. Welcome back!"
 	}
-	c.lives -= 1
-	if len(s.Str) <= 1 {
+	if s.IsDud() {
+		logger.Info("Dud removed", "Dud", s.Str)
 		return false, "Dud removed"
 	}
+	c.lives -= 1
 	fraction := c.findCommonCharacters(s.Str)
+	logger.Info("Incorrect guess", "guessed", s.Str, "match", fraction, "remainingLives", c.lives)
 	if c.lives == 0 {
-		return true, fmt.Sprintf("Come back when you get some money buddy. Winning word is %s", c.winningWord.Str)
+		logger.Info("Player lost - out of lives", "winningWord", c.winningWord.Str)
+		return true, fmt.Sprintf("Terminal locked. Winning word is %s", c.winningWord.Str)
 	}
 	return false, fmt.Sprintf("%s letters correct. %d lives remaining", fraction, c.lives)
 }
 
 // findCommonCharacters compares the guessed word with the winning word
 // and returns a fraction string showing how many characters match at the same positions.
-func (c *Carnie) findCommonCharacters(s string) string {
+func (c *Validator) findCommonCharacters(s string) string {
 	s1 := []rune(s)
 	s2 := []rune(c.winningWord.Str)
 	if len(s1) != len(s2) {
@@ -65,7 +72,7 @@ func (c *Carnie) findCommonCharacters(s string) string {
 
 // selectWinningWord randomly selects a valid word (not a single character)
 // from the symbol grid to be the winning password.
-func (c *Carnie) selectWinningWord(syms [][]*symbol.Symbol) *symbol.Symbol {
+func (c *Validator) selectWinningWord(syms [][]*symbol.Symbol) *symbol.Symbol {
 	var s *symbol.Symbol = nil
 	for s == nil || (s != nil && len(s.Runes) <= 1) {
 		s = syms[rand.Intn(len(syms))][rand.Intn(len(syms[0]))]
