@@ -91,9 +91,9 @@ func (c *Cursor) _displace(x, y int) {
 		logger.Debug("Cursor on same symbol, continuing displacement")
 		c._displace(x, y)
 	} else {
+	c.Selection = tmp
 		logger.Debug("Cursor moved to new symbol", "x", c.X, "y", c.Y, "symbol", tmp.Str)
 	}
-	c.Selection = tmp
 }
 
 // GetSelectedSymbol returns the symbol currently under the cursor.
