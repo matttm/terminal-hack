@@ -1,57 +1,81 @@
 # terminal-hack
 
-Development: Main development completed with intermittent improvements
+Status: stable, with occasional improvements.
 
-## Description
+## Overview
 
-This is a terminal based game written in Go, which is inspired by terminal hacking in Fallout 3. In this game, a 2d grid is filled with single 'dud' characters and words. The objective is to determine which word is the winning word in a limited number of guesses. Each incorrect guess will tell you how many of the selected letters are correct. A letter is correct if it has the same index and actual character as in the winning word. For example. if the winning word is `book` and selected word is `bang`, the selected word has one correct character.
+`terminal-hack` is a terminal-based game written in Go, inspired by the Fallout 3 terminal hacking mini‑game. A 2D grid is filled with words and single‑character "duds." Your goal is to find the winning word within a limited number of attempts.
 
-Running this inside of `cool-retro-term` is suggested because it looks sick. Just search `cool-retro-term` on github, download the latest relase, build this from source, then run this in the new terminal.
+Each incorrect guess reveals how many characters match **exactly** (same character and same index) with the winning word. Example: if the winning word is `BOOK` and you guess `BANG`, you have 1 correct character (`B` at index 0).
 
-Below is a run in `cool-retro-term`:
+If you want the full retro vibe, try it in a CRT‑style terminal emulator like `cool-retro-term` (optional).
 
 <img width="1728" alt="Screenshot 2025-01-22 at 5 16 23 PM" src="https://github.com/user-attachments/assets/5ad793ca-6147-46fb-abb5-56d03efec0a9" />
 
-## Design
+## Features
 
-This game is created with a very low-level drawing library called Termbox. Because of this, I had to program all navigation/animation functionaliy.
+- Fallout‑style word grid with random "dud" characters.
+- Cursor navigation across the grid.
+- Limited lives with immediate feedback after each guess.
+- File‑based logging for debugging (`./logs/`).
+- Configurable layout and gameplay constants in `internal/constants`.
+
+## Requirements
+
+- Go `1.22+`
+- A terminal that supports ANSI color
+
+## Run
+
+```bash
+go run .
+```
+
+Build a binary instead:
+
+```bash
+go build -o terminal-hack .
+./terminal-hack
+```
+
+## Controls
+
+- `Arrow Keys` move the cursor
+- `Enter` selects the current word/character
+- `Esc` exits the game
+
+## How It Works
+
+1. A word list is loaded from a random file in `words/` and converted to uppercase.
+2. A fixed number of words are inserted into the grid, with random single‑character duds filling the rest.
+3. A winning word is randomly selected from the inserted words.
+4. Each guess returns a match count (correct letters in the correct position).
+5. The game ends when you guess the word or run out of lives.
+
+## Design Notes
+
+The UI is built on `tcell`, which provides a low‑level terminal drawing API. Because of that, cursor movement, selection, and redraw behavior are implemented manually.
 
 ## Architecture
 
-```mermaid
-graph TD
-    Main[main.go<br/>Entry Point & Game Loop]
-    
-    Main --> Cursor[internal/cursor<br/>cursor.go]
-    Main --> Container[internal/container<br/>container.go & message-container.go]
-    Main --> Validator[internal/validator<br/>validator.go]
-    Main --> Utilities[internal/utilities<br/>utilities.go]
-    
-    Cursor --> Renderer[internal/renderer<br/>renderer.go]
-    Cursor --> Symbol[internal/symbol<br/>symbol.go & rune.go]
-    
-    Container --> Renderer
-    Container --> Symbol
-    Container --> Constants[internal/constants<br/>constants.go]
-    
-    Validator --> Symbol
-    
-    Utilities --> Words[words/<br/>Word List Files]
-    Utilities --> Constants
-    
-    Renderer --> Symbol
-    Renderer --> Constants
-    
-    Main -.-> Tcell[github.com/gdamore/tcell<br/>Terminal UI Library]
-    Renderer -.-> Tcell
-    Cursor -.-> Tcell
-    
-    Symbol -.-> UUID[github.com/google/uuid<br/>Symbol ID Generation]
-    
-    style Main fill:#4a90e2,stroke:#2e5c8a,color:#fff
-    style Tcell fill:#90ee90,stroke:#228b22,color:#000
-    style UUID fill:#90ee90,stroke:#228b22,color:#000
-    style Words fill:#ffa07a,stroke:#ff6347,color:#000
+```text
+main.go (entry point + game loop)
+├─ internal/cursor (cursor.go)
+│  ├─ internal/renderer (renderer.go)
+│  └─ internal/symbol (symbol.go, rune.go)
+├─ internal/container (container.go, message-container.go)
+│  ├─ internal/renderer (renderer.go)
+│  ├─ internal/symbol (symbol.go, rune.go)
+│  └─ internal/constants (constants.go)
+├─ internal/validator (validator.go)
+│  └─ internal/symbol (symbol.go, rune.go)
+└─ internal/utilities (utilities.go)
+   ├─ words/ (word list files)
+   └─ internal/constants (constants.go)
+
+Shared dependencies:
+- github.com/gdamore/tcell (terminal UI)
+- github.com/google/uuid (symbol ID generation)
 ```
 
 ### Package Responsibilities
@@ -78,10 +102,29 @@ graph TD
 7. **Validation**: User presses Enter → `validator` checks guess → result displayed
 8. **Loop**: Game continues until win, lose, or exit
 
+## Configuration
+
+Most gameplay and layout settings live in `internal/constants/constants.go`:
+
+- `LIVES` (attempts)
+- `DEFAULT_WORD_COUNT`
+- `DEFAULT_WORD_LENGTH`
+- Layout and spacing values (container sizes, offsets)
+
+## Logging
+
+Every run writes a timestamped log file to `./logs/`. See `LOGGING.md` for details and examples.
+
+## Troubleshooting
+
+- If the UI looks cramped, enlarge your terminal window.
+- If colors look off, ensure your terminal supports true‑color ANSI rendering.
+- If the game doesn’t start, run `go env` to confirm you’re using Go `1.22+`.
+
 ## Authors
 
 -   Matt Maloney : matttm
 
 ## Contribute
 
-If you want to contribute, just send me a message.
+If you want to contribute, open an issue or send a message with your idea.
